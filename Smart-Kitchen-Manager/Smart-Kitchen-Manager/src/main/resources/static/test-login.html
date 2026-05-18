@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>登录测试</title>
+</head>
+<body>
+    <h2>管理员登录测试</h2>
+    <form id="loginForm">
+        <div>
+            <label>用户名：</label>
+            <input type="text" id="username" value="admin">
+        </div>
+        <div>
+            <label>密码：</label>
+            <input type="password" id="password" value="admin">
+        </div>
+        <div>
+            <button type="button" onclick="testLogin()">测试登录</button>
+        </div>
+    </form>
+    
+    <div id="result"></div>
+    
+    <script>
+        function testLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            fetch(`/users/login?username=${username}&password=${password}`, {
+                method: 'GET'
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerHTML = 
+                    '<h3>登录结果：</h3><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                
+                if (data.code === 0) {
+                    alert('登录成功！Token: ' + data.token);
+                } else {
+                    alert('登录失败：' + data.msg);
+                }
+            })
+            .catch(error => {
+                document.getElementById('result').innerHTML = 
+                    '<h3>错误：</h3><pre>' + error.toString() + '</pre>';
+                alert('请求失败：' + error);
+            });
+        }
+    </script>
+</body>
+</html>

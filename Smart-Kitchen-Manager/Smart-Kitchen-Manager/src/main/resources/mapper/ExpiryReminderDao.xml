@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dao.ExpiryReminderDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.entity.ExpiryReminderEntity" id="expiryReminderMap">
+        <result property="userid" column="userid"/>
+        <result property="userShicaiId" column="user_shicai_id"/>
+        <result property="remindDate" column="remind_date"/>
+        <result property="status" column="status"/>
+        <result property="addtime" column="addtime"/>
+    </resultMap>
+
+	<!-- 查询提醒详情（包含关联的食材信息） -->
+	<!-- 需求: 1.4, 6.1 - 查询提醒详情时同时返回关联的用户食材信息 -->
+	<select id="selectReminderDetail" resultType="map">
+		SELECT 
+			er.id,
+			er.userid,
+			er.user_shicai_id,
+			er.remind_date,
+			er.status,
+			er.addtime,
+			us.shicai_name,
+			us.quantity,
+			us.unit,
+			us.expiry_date as shicai_expiry_date,
+			us.purchase_date,
+			us.status as shicai_status
+		FROM expiry_reminder er
+		LEFT JOIN user_shicai us ON er.user_shicai_id = us.id
+		WHERE er.id = #{id}
+	</select>
+	
+	<!-- 查询未读提醒数量 -->
+	<!-- 需求: 1.1 - 支持查询用户的未读提醒数量 -->
+	<select id="selectUnreadCount" resultType="int">
+		SELECT COUNT(*)
+		FROM expiry_reminder
+		WHERE userid = #{userid}
+		AND status IN ('pending', 'sent')
+	</select>
+
+</mapper>
+
+<!--
+数据库索引建议：
+为了优化查询性能，建议添加以下索引：
+
+1. expiry_reminder表索引：
+   CREATE INDEX idx_userid ON expiry_reminder(userid);
+   用途：优化按用户ID查询提醒列表的性能
+   
+   CREATE INDEX idx_user_shicai_id ON expiry_reminder(user_shicai_id);
+   用途：优化关联查询和级联删除操作的性能
+   
+   CREATE INDEX idx_status ON expiry_reminder(status);
+   用途：优化按状态筛选提醒的性能
+   
+   CREATE INDEX idx_remind_date ON expiry_reminder(remind_date);
+   用途：优化按提醒日期排序和查询的性能
+   
+   CREATE INDEX idx_userid_status ON expiry_reminder(userid, status);
+   用途：优化查询未读提醒数量的性能（复合索引）
+
+2. user_shicai表索引（如果不存在）：
+   CREATE INDEX idx_status_expiry ON user_shicai(status, expiry_date);
+   用途：优化定时任务扫描即将过期食材的性能
+   
+   CREATE INDEX idx_userid ON user_shicai(userid);
+   用途：优化按用户ID查询食材的性能
+
+索引创建SQL脚本：
+在生产环境执行前请先备份数据库
+建议在业务低峰期执行索引创建操作
+
+expiry_reminder表索引
+CREATE INDEX idx_userid ON expiry_reminder(userid);
+CREATE INDEX idx_user_shicai_id ON expiry_reminder(user_shicai_id);
+CREATE INDEX idx_status ON expiry_reminder(status);
+CREATE INDEX idx_remind_date ON expiry_reminder(remind_date);
+CREATE INDEX idx_userid_status ON expiry_reminder(userid, status);
+
+user_shicai表索引
+CREATE INDEX idx_status_expiry ON user_shicai(status, expiry_date);
+CREATE INDEX idx_userid ON user_shicai(userid);
+
+验证索引创建
+SHOW INDEX FROM expiry_reminder;
+SHOW INDEX FROM user_shicai;
+-->

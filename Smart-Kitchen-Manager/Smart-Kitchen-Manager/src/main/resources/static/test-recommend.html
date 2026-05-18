@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>智能推荐测试</title>
+</head>
+<body>
+    <h2>智能推荐接口测试</h2>
+    
+    <div>
+        <label>用户ID：</label>
+        <input type="number" id="userId" value="11">
+    </div>
+    <div>
+        <label>推荐类型：</label>
+        <select id="recommendType">
+            <option value="stock_based">基于库存</option>
+            <option value="hot">热门推荐</option>
+            <option value="personalized">个性化</option>
+        </select>
+    </div>
+    <div>
+        <button onclick="testRecommend()">测试推荐</button>
+    </div>
+    
+    <div id="result"></div>
+    
+    <script>
+        function testRecommend() {
+            const userId = document.getElementById('userId').value;
+            const recommendType = document.getElementById('recommendType').value;
+            
+            const url = `/caipuxinxi/recommend?userId=${userId}&pageNum=1&pageSize=5&recommendType=${recommendType}`;
+            
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerHTML = 
+                    '<h3>推荐结果：</h3><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            })
+            .catch(error => {
+                document.getElementById('result').innerHTML = 
+                    '<h3>错误：</h3><pre>' + error.toString() + '</pre>';
+            });
+        }
+    </script>
+</body>
+</html>

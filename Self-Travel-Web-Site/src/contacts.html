@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>光影瞬间 - 联系我</title>
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Google -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      border: none;
+      outline: none;
+      font-family: "Inter", sans-serif;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-image: url('img/bac 4.png');
+      background-size: cover;
+      background-position: top;
+      background-attachment: fixed;
+      color: #fff;
+      overflow-x: hidden;
+      min-height: 100vh;
+      background-repeat: no-repeat;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      background: linear-gradient(transparent 50%, rgba(0, 0, 0, 0.9));
+      z-index: -1;
+    }
+
+    /* 导航栏样式 */
+    header {
+      position: absolute;
+      top: 0;
+      z-index: 1;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 5%;
+      background-color: rgba(255, 255, 255, 0.2);
+      height: 30px;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      animation: topIn 1.2s ease-out forwards;
+    }
+    
+    nav a {
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      color: rgb(53, 53, 53);
+      width: 110px;
+      text-align: center;
+      padding: 15px 0;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+    
+    .nav-items.active {
+      background-color: #16423c;
+      color: white;
+    }
+    
+    nav a:hover {
+      background-color: #16423c;
+      color: white;
+    }
+    
+    nav:hover > a:not(:hover) {
+      background-color: transparent;
+      color: rgb(53, 53, 53);
+    }
+
+    /* Logo样式 */
+nav .logo {
+  height: 40px;
+  width: auto;
+  margin-right: 20px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+  cursor: default;
+}
+
+nav .logo:hover {
+  transform: scale(1.05);
+}
+
+    /* 主要内容区域 */
+    .content {
+      padding: 120px 5% 80px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .contact-container {
+      display: grid;
+      grid-template-columns: 400px 1fr; /* 左侧固定宽度，右侧自适应 */
+      gap: 40px;
+    }
+
+    .contact-info {
+      background-color: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      animation: fadeIn 1s ease-out;
+      width: 100%;
+    }
+
+    .contact-form {
+      background-color: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      animation: fadeIn 1.2s ease-out;
+      width: 100%;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      margin-bottom: 30px;
+      color: #4CAF50;
+      position: relative;
+      padding-bottom: 10px;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 60px;
+      height: 3px;
+      background-color: #4CAF50;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 25px;
+    }
+
+    .info-icon {
+      font-size: 1.5rem;
+      color: #4CAF50;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(76, 175, 80, 0.2);
+      border-radius: 50%;
+      margin-right: 20px;
+      flex-shrink: 0;
+    }
+
+    .info-text h3 {
+      font-size: 1.2rem;
+      margin-bottom: 5px;
+      color: #fff;
+    }
+
+    .info-text p {
+      color: #ddd;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .social-links a {
+      color: #fff;
+      font-size: 1.5rem;
+      transition: transform 0.3s, color 0.3s;
+    }
+
+    .social-links a:hover {
+      transform: translateY(-3px);
+      color: #4CAF50;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 10px;
+      color: #ddd;
+      font-size: 1rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 15px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: #4CAF50;
+      background-color: rgba(76, 175, 80, 0.1);
+    }
+
+    .form-group textarea {
+      min-height: 200px;  /* 增加文本区域高度 */
+      resize: vertical;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .submit-btn:hover {
+      background-color: #45a049;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .map-container {
+      margin-top: 40px;
+      border-radius: 15px;
+      overflow: hidden;
+      height: 250px;
+    }
+
+    .map-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* 动画效果 */
+    @keyframes topIn {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 1200px) {
+      .contact-container {
+        grid-template-columns: 350px 1fr;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .contact-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .contact-form {
+        order: -1; /* 在小屏幕上表单显示在上方 */
+      }
+    }
+
+    @media (max-width: 768px) {
+      .content {
+        padding: 100px 5% 60px;
+      }
+      
+      .contact-info, .contact-form {
+        padding: 30px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .content {
+        padding: 80px 15px 40px;
+      }
+      
+      .contact-info, .contact-form {
+        padding: 25px;
+      }
+      
+      .section-title {
+        font-size: 1.5rem;
+      }
+      
+      .info-item {
+        flex-direction: column;
+      }
+      
+      .info-icon {
+        margin-right: 0;
+        margin-bottom: 15px;
+      }
+      
+      .form-group textarea {
+        min-height: 150px;
+      }
+    }
+
+    /* 登录相关样式 */
+    .login-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 8px 20px;
+      background-color: rgba(184, 84, 27, 0.847);
+      color: rgb(0, 0, 0);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s;
+      z-index: 100;
+    }
+
+    .login-btn:hover {
+      background-color: rgba(69, 160, 73, 0.9);
+      transform: translateY(-2px);
+    }
+
+    .login-container {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-form {
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      width: 350px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .login-form h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .submit-btn:hover {
+      background-color: #45a049;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #777;
+    }
+
+    .close-btn:hover {
+      color: #333;
+    }
+
+    .extra-links {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .extra-links a {
+      color: #4CAF50;
+      text-decoration: none;
+    }
+
+    .extra-links a:hover {
+      text-decoration: underline;
+    }
+
+    /* 表单提交成功提示 */
+    .success-message {
+      display: none;
+      background-color: rgba(76, 175, 80, 0.2);
+      border: 1px solid #4CAF50;
+      color: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    /*页脚*/
+.site-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #111; 
+  color: #ccc; 
+  font-size: 14px;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: center;
+  z-index: 1000;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+  flex-wrap: wrap;
+}
+
+.footer-left, .footer-center, .footer-right {
+  margin: 5px 10px;
+  flex: 1 1 30%;
+  text-align: center;
+}
+
+.footer-right a {
+  color: #ccc;
+  text-decoration: none;
+  margin: 0 4px;
+}
+
+.footer-right a:hover {
+  color: #f44336; 
+}
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <nav>
+      <img src="img/logo.png" alt="光影瞬间 Logo" class="logo">
+      <a class="nav-items" href="index.html">主页</a>
+      <a class="nav-items" href="reviews.html">作品集</a>
+      <a class="nav-items" href="about.html">关于我</a>
+      <a class="nav-items active" href="contacts.html">联系我</a>
+    </nav>    
+  </header>
+
+  <!-- 登录按钮 -->
+  <button class="login-btn" id="showLogin">
+    <i class="fas fa-user"></i> 登录
+  </button>
+
+  <div class="content">
+    <div class="contact-container">
+      <!-- 左侧联系信息部分 -->
+      <div class="contact-info">
+        <h2 class="section-title">联系我</h2>
+        
+        <div class="info-item">
+          <div class="info-icon">
+            <i class="fas fa-map-marker-alt"></i>
+          </div>
+          <div class="info-text">
+            <h3>地址</h3>
+            <p>浙江工业大学屏峰校区</p>
+          </div>
+        </div>
+        
+        <div class="info-item">
+          <div class="info-icon">
+            <i class="fas fa-envelope"></i>
+          </div>
+          <div class="info-text">
+            <h3>电子邮件</h3>
+            <p>txx_xuxuanan@163.com</p>
+          </div>
+        </div>
+        
+        <div class="info-item">
+          <div class="info-icon">
+            <i class="fas fa-phone-alt"></i>
+          </div>
+          <div class="info-text">
+            <h3>联系电话</h3>
+            <p>+86 15356678309</p>
+          </div>
+        </div>
+        
+        <div class="info-item">
+          <div class="info-icon">
+            <i class="fas fa-weixin"></i>
+          </div>
+          <div class="info-text">
+            <h3>微信</h3>
+            <p>S_asdfghjkl_</p>
+          </div>
+        </div>
+        
+        <div class="social-links">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-weixin"></i></a>
+          <a href="#"><i class="fab fa-weibo"></i></a>
+          <a href="#"><i class="fab fa-phone-alt"></i></a>
+        </div>
+        
+        <div class="map-container">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d55158.32809860877!2d119.9629573486328!3d30.225795999999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x344b7b0d8cea23c7%3A0xad78b0514d362dbc!2z5rWZ5rGf5bel5Lia5aSn5a2m!5e0!3m2!1szh-CN!2shk!4v1746359599258!5m2!1szh-CN!2shk" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+      
+      <!-- 右侧意见反馈表单部分 -->
+      <div class="contact-form">
+        <h2 class="section-title">意见反馈</h2>
+        
+        <div id="successMessage" class="success-message">
+          <i class="fas fa-check-circle"></i> 感谢您的反馈！我们会尽快与您联系。
+        </div>
+        
+        <form id="feedbackForm">
+          <div class="form-group">
+            <label for="name">您的姓名</label>
+            <input type="text" id="name" name="name" placeholder="请输入您的姓名" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="email">电子邮箱</label>
+            <input type="email" id="email" name="email" placeholder="请输入您的电子邮箱" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="phone">联系电话 (可选)</label>
+            <input type="tel" id="phone" name="phone" placeholder="请输入您的联系电话">
+          </div>
+          
+          <div class="form-group">
+            <label for="subject">主题</label>
+            <input type="text" id="subject" name="subject" placeholder="请输入反馈主题" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="message">您的意见或建议</label>
+            <textarea id="message" name="message" placeholder="请详细描述您的意见或建议..." required></textarea>
+          </div>
+          
+          <button type="submit" class="submit-btn">提交反馈</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 登录表单 -->
+  <div class="login-container" id="loginContainer">
+    <div class="login-form">
+      <span class="close-btn" id="closeLogin">&times;</span>
+      <h2>用户登录</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username">用户名</label>
+          <input type="text" id="username" placeholder="请输入用户名" required>
+        </div>
+        <div class="form-group">
+          <label for="password">密码</label>
+          <input type="password" id="password" placeholder="请输入密码" required>
+        </div>
+        <button type="submit" class="submit-btn">登录</button>
+      </form>
+      <div class="extra-links">
+        <a href="#">忘记密码?</a> | <a href="#">注册账号</a>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // 登录相关脚本
+    const showLoginBtn = document.getElementById('showLogin');
+    const loginContainer = document.getElementById('loginContainer');
+    const closeLoginBtn = document.getElementById('closeLogin');
+    const loginForm = document.getElementById('loginForm');
+
+    // 显示登录表单
+    showLoginBtn.addEventListener('click', () => {
+      loginContainer.style.display = 'flex';
+    });
+
+    // 关闭登录表单
+    closeLoginBtn.addEventListener('click', () => {
+      loginContainer.style.display = 'none';
+    });
+
+    // 点击模态框外部关闭
+    loginContainer.addEventListener('click', (e) => {
+      if (e.target === loginContainer) {
+        loginContainer.style.display = 'none';
+      }
+    });
+
+    // 表单提交处理
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      
+      // 这里可以添加实际的登录验证逻辑（未添加）
+      console.log('登录信息:', { username, password });
+      
+      // 模拟登录成功
+      alert('登录成功!');
+      loginContainer.style.display = 'none';
+      
+      // 登录后更新按钮状态
+      showLoginBtn.innerHTML = '<i class="fas fa-user-check"></i> ' + username;
+    });
+
+    // 反馈表单处理
+    const feedbackForm = document.getElementById('feedbackForm');
+    const successMessage = document.getElementById('successMessage');
+
+    feedbackForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      // 获取表单数据
+      const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        subject: document.getElementById('subject').value,
+        message: document.getElementById('message').value
+      };
+      
+      // 这里可以添加实际的表单提交逻辑，例如发送到服务器（未添加）
+      console.log('反馈信息:', formData);
+      
+      // 显示成功消息
+      successMessage.style.display = 'block';
+      
+      // 重置表单
+      feedbackForm.reset();
+      
+      // 3秒后隐藏成功消息
+      setTimeout(() => {
+        successMessage.style.display = 'none';
+      }, 5000);
+    });
+  </script>
+  
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-left">© 2025 田笑喧(302023572097) 版权所有</div>
+      <div class="footer-center">技术支持：田笑喧(302023572097)</div>
+      <div class="footer-right">
+        分享：
+        <a href="#" title="分享到微博">微博</a> |
+        <a href="#" title="分享到微信">微信</a> |
+        <a href="#" title="分享到QQ">QQ</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

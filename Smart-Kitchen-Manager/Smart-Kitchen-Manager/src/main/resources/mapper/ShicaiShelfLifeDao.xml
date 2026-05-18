@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dao.ShicaiShelfLifeDao">
+
+    <resultMap type="com.entity.ShicaiShelfLifeEntity" id="shicaiShelfLifeMap">
+        <result property="shicaiId" column="shicai_id"/>
+        <result property="shicaiName" column="shicai_name"/>
+        <result property="category" column="category"/>
+        <result property="shelfLifeDays" column="shelf_life_days"/>
+        <result property="storageMethod" column="storage_method"/>
+        <result property="addtime" column="addtime"/>
+    </resultMap>
+
+    <!-- 根据食材ID查询保质期信息 -->
+    <select id="selectByShicaiId" resultMap="shicaiShelfLifeMap">
+        SELECT 
+            id,
+            shicai_id,
+            shicai_name,
+            category,
+            shelf_life_days,
+            storage_method,
+            addtime
+        FROM shicai_shelf_life
+        WHERE shicai_id = #{shicaiId}
+        LIMIT 1
+    </select>
+
+</mapper>

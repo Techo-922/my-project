@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>光影瞬间 - 作品集</title>
+  <meta name="description" content="探索我的足迹">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      border: none;
+      outline: none;
+      font-family: "Inter", sans-serif;
+    }
+
+    body {
+      background-image: url('img/bac 4.png');
+      background-size: cover;
+      background-position: top;
+      background-attachment: fixed;
+      color: #fff;
+      overflow-x: hidden;
+      min-height: 100vh;
+      background-repeat: no-repeat;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      background: linear-gradient(transparent 50%, rgba(0, 0, 0, 0.9));
+      z-index: -1;
+    }
+
+    /* 导航栏样式 */
+    header {
+      position: absolute;
+      top: 0;
+      z-index: 1;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 5%;
+      background-color: rgba(255, 255, 255, 0.2);
+      height: 30px;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      animation: topIn 1.2s ease-out forwards;
+    }
+    
+    nav a {
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      color: rgb(53, 53, 53);
+      width: 110px;
+      text-align: center;
+      padding: 15px 0;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+    
+    .nav-items.active {
+      background-color: #16423c;
+      color: white;
+    }
+    
+    nav a:hover {
+      background-color: #16423c;
+      color: white;
+    }
+    
+    nav:hover > a:not(:hover) {
+      background-color: transparent;
+      color: rgb(53, 53, 53);
+    }
+
+    /* Logo样式 */
+nav .logo {
+  height: 40px;
+  width: auto;
+  margin-right: 20px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+  cursor: default; 
+}
+
+nav .logo:hover {
+  transform: scale(1.05);
+}
+
+    /* 画廊标题样式 */
+    .gallery-title {
+      position: absolute;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      color: white;
+      text-align: center;
+      z-index: 1;
+    }
+    
+    .gallery-title h2 {
+      font-size: 2.5rem;
+      font-weight: 400;
+      letter-spacing: 10px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    
+    .gallery-title p {
+      font-size: 1rem;
+      letter-spacing: 3px;
+      opacity: 0.8;
+    }
+
+    /* 卡片容器样式 */
+    .container {
+      display: flex;
+      width: 90vw;
+      height: 60vh;
+      margin: 180px auto 0;
+      position: relative;
+      z-index: 0;
+    }
+
+    .panel {
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      height: 100%;
+      border-radius: 50px;
+      color: #fff;
+      cursor: pointer;
+      flex: 0.5;
+      margin: 10px;
+      position: relative;
+      transition: all 700ms ease-in;
+      opacity: 0;
+    }
+
+    .panel h3 {
+      font-size: 24px;
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      margin: 0;
+      opacity: 0;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .panel.active {
+      flex: 5;
+    }
+
+    .panel.active h3 {
+      opacity: 1;
+      transition: opacity 0.3s ease-in 0.4s;
+    }
+
+    /* 主内容区域 */
+    .section {
+      padding: 80px 20px 40px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .section h2 {
+      text-align: center;
+      margin: 20px 0 40px;
+      font-size: 2.2rem;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    /* 卡片样式 */
+    .card {
+      position: relative;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      margin-bottom: 30px;
+      padding: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card-preview {
+      margin-bottom: 15px;
+    }
+
+    .card-preview h3 {
+      font-size: 1.5rem;
+      margin-bottom: 5px;
+      color: #4db8a1;
+    }
+
+    .card-preview p {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    /* 照片网格 */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 15px;
+    }
+
+    .photo-item {
+      background-color: #222;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .photo-item:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+    .photo-item img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+      cursor: grab;
+      transition: opacity 0.3s ease;
+    }
+
+    .photo-item:hover img {
+      opacity: 0.9;
+    }
+
+    .photo-item.dragging {
+      opacity: 0.5;
+    }
+
+    .photo-details {
+      padding: 10px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .photo-details strong {
+      color: #4db8a1;
+    }
+
+    /* 下载框样式 */
+    .shopping-cart {
+      position: fixed;
+      bottom: 60px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background-color: #16423c;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .shopping-cart:hover {
+      transform: scale(1.1);
+      background-color: #1e5a52;
+    }
+
+    .shopping-cart i {
+      font-size: 24px;
+      color: white;
+    }
+
+    .shopping-cart .badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background-color: #ff4757;
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px;
+      transition: transform 0.3s ease;
+    }
+
+    .cart-dropdown {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 300px;
+      max-height: 400px;
+      background-color: rgba(26,26,26,0.95);
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      z-index: 999;
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+      transform-origin: bottom right;
+      transform: scale(0.9);
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .cart-dropdown.show {
+      display: flex;
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #444;
+    }
+
+    .cart-header h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: #4db8a1;
+    }
+
+    .cart-header i {
+      cursor: pointer;
+      color: #aaa;
+      transition: color 0.2s ease;
+    }
+
+    .cart-header i:hover {
+      color: #ff4757;
+    }
+
+    .cart-items {
+      flex-grow: 1;
+      overflow-y: auto;
+      margin-bottom: 15px;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #333;
+      transition: background-color 0.2s ease;
+    }
+
+    .cart-item:hover {
+      background-color: rgba(255,255,255,0.05);
+    }
+
+    .cart-item img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+
+    .cart-item-info {
+      flex-grow: 1;
+      font-size: 0.8rem;
+    }
+
+    .cart-item-remove {
+      color: #ff4757;
+      cursor: pointer;
+      margin-left: 10px;
+      transition: transform 0.2s ease;
+    }
+
+    .cart-item-remove:hover {
+      transform: scale(1.2);
+    }
+
+    .cart-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .cart-btn {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      flex: 1;
+    }
+
+    .cart-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .cart-clear {
+      background-color: #ff4757;
+      color: white;
+    }
+
+    .cart-clear:hover {
+      background-color: #ff6b81;
+    }
+
+    .cart-download {
+      background-color: #4db8a1;
+      color: white;
+    }
+
+    .cart-download:hover {
+      background-color: #5fd1b7;
+    }
+
+    /* 动画效果 */
+    @keyframes topIn {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes backgroundImage {
+      from {
+        background-position: top;
+      }
+      to {
+        background-position: 50% 14%;
+      }
+    }
+    
+    /* 卡片滑入动画 */
+    @keyframes slideUp {
+      from {
+        transform: translateY(100px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    /* 标题滑入动画 */
+    @keyframes titleFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px) translateX(-50%);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) translateX(-50%);
+      }
+    }
+    
+    body {
+      animation: backgroundImage 1.6s ease-out forwards;
+    }
+    
+    /* 应用动画 */
+    .gallery-title {
+      animation: titleFadeIn 1.2s ease-out forwards;
+      animation-delay: 0.3s;
+      opacity: 0;
+    }
+    
+    .panel {
+      animation: slideUp 1s ease-out forwards;
+    }
+    
+    /* 为每个卡片设置不同的动画延迟，实现错开效果 */
+    .panel:nth-child(1) { animation-delay: 0.4s; }
+    .panel:nth-child(2) { animation-delay: 0.5s; }
+    .panel:nth-child(3) { animation-delay: 0.6s; }
+    .panel:nth-child(4) { animation-delay: 0.7s; }
+    .panel:nth-child(5) { animation-delay: 0.8s; }
+
+    /* 空下载框提示 */
+    .empty-cart {
+      text-align: center;
+      padding: 20px;
+      color: #888;
+      font-style: italic;
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+      .photo-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      }
+      
+      nav a {
+        width: auto;
+        padding: 10px 15px;
+        font-size: 14px;
+      }
+
+      .cart-dropdown {
+        width: 280px;
+        right: 10px;
+      }
+      
+      .gallery-title h2 {
+        font-size: 2rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        width: 100vw;
+      }
+
+      .panel:nth-of-type(4),
+      .panel:nth-of-type(5) {
+        display: none;
+      }
+      
+      nav a {
+        width: 80px;
+        font-size: 12px;
+        padding: 10px 0;
+        letter-spacing: 1px;
+      }
+      
+      .gallery-title {
+        top: 12%;
+        width: 90%;
+      }
+      
+      .gallery-title h2 {
+        font-size: 1.5rem;
+        letter-spacing: 5px;
+      }
+      
+      .gallery-title p {
+        font-size: 0.9rem;
+      }
+      
+      .section h2 {
+        font-size: 1.8rem;
+      }
+      
+      .photo-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <!-- 登录按钮 -->
+  <button class="login-btn" id="showLogin">
+    <i class="fas fa-user"></i> 登录
+  </button>
+
+  <style>
+    /* 登录相关样式 */
+.login-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 8px 20px;
+  background-color: rgba(184, 84, 27, 0.847);
+  color: rgb(0, 0, 0);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+  z-index: 100;
+}
+
+.login-btn:hover {
+  background-color: rgba(69, 160, 73, 0.9);
+  transform: translateY(-2px);
+}
+
+.login-container {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-form {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  width: 350px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.login-form h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+  background-color: #45a049;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  cursor: pointer;
+  color: #777;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+.extra-links {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.extra-links a {
+  color: #4CAF50;
+  text-decoration: none;
+}
+
+.extra-links a:hover {
+  text-decoration: underline;
+}
+
+/* 图片查看器样式 */
+.image-viewer {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-viewer.show {
+  display: flex;
+}
+
+.image-viewer-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.image-viewer img {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+}
+
+.image-viewer-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.image-viewer-info {
+  position: absolute;
+  bottom: -40px;
+  left: 0;
+  color: white;
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+}
+
+.image-viewer-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+}
+
+.image-viewer-prev {
+  left: 20px;
+}
+
+.image-viewer-next {
+  right: 20px;
+}
+
+.image-viewer-nav:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 768px) {
+  .image-viewer-nav {
+    font-size: 20px;
+    padding: 15px;
+  }
+  
+  .image-viewer-close {
+    top: -30px;
+    font-size: 25px;
+  }
+  
+  .image-viewer-info {
+    bottom: -30px;
+    font-size: 14px;
+  }
+}
+
+/*页脚*/
+.site-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #111; 
+  color: #ccc; 
+  font-size: 14px;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: center;
+  z-index: 1000;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+  flex-wrap: wrap;
+}
+
+.footer-left, .footer-center, .footer-right {
+  margin: 5px 10px;
+  flex: 1 1 30%;
+  text-align: center;
+}
+
+.footer-right a {
+  color: #ccc;
+  text-decoration: none;
+  margin: 0 4px;
+}
+
+.footer-right a:hover {
+  color: #f44336;
+}
+
+  </style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <img src="img/logo.png" alt="光影瞬间 Logo" class="logo">
+    <a class="nav-items" href="index.html">主页</a>
+    <a class="nav-items active" href="reviews.html">作品集</a>
+    <a class="nav-items" href="about.html">关于我</a>
+    <a class="nav-items" href="contacts.html">联系我</a>
+  </nav>
+</header>
+
+<div class="section">
+
+<!-- 画廊标题 -->
+<div class="gallery-title">
+  <h2>我的画廊</h2>
+  <p>Explore the beauty of the world</p>
+</div>  
+    <!-- 卡片容器 -->
+    <div class="container">
+      <div class="panel active" style="background-image: url('img/gallery01.jpg')">
+        <h3>黄山 宏村</h3>
+      </div>
+      <div class="panel" style="background-image: url('img/gallery02.jpg')">
+        <h3>杭州 青山湖</h3>
+      </div>
+      <div class="panel" style="background-image: url('img/gallery03.jpg')">
+        <h3>杭州 九溪</h3>
+      </div>
+      <div class="panel" style="background-image: url('img/gallery04.jpg')">
+        <h3>2025 除夕</h3>
+      </div>
+      <div class="panel" style="background-image: url('img/gallery05.jpg')">
+        <h3>富阳 山上</h3>
+      </div>
+    </div>
+
+  <h2>我的摄影作品集</h2>
+
+  <div class="card-grid">
+    <!-- 卡片1 -->
+    <div class="card">
+      <div class="card-preview">
+        <h3>武汉</h3>
+        <p>2024.7</p>
+      </div>
+      <div class="photo-grid">
+        <div class="photo-item" draggable="true">
+          <img src="img/card1 01.jpg" alt="武汉">
+          <div class="photo-details">
+            <strong>地点:</strong> 老街的一家店铺<br>
+            <strong>参数:</strong> ISO 250 · 1/50s · f/4.0
+          </div>
+        </div>
+        <div class="photo-item" draggable="true">
+          <img src="img/card1 02.jpg" alt="黄鹤楼">
+          <div class="photo-details">
+            <strong>地点:</strong> 黄鹤楼<br>
+            <strong>参数:</strong> ISO 125 · 1/100s · f/5.6
+          </div>
+        </div>
+        <div class="photo-item" draggable="true">
+          <img src="img/card1 03.jpg" alt="巴公房子">
+          <div class="photo-details">
+            <strong>地点:</strong> 巴公房子<br>
+            <strong>参数:</strong> ISO 100 · 1/100s · f/2.4
+          </div>
+        </div>
+        <div class="photo-item" draggable="true">
+          <img src="img/card1 04.jpg" alt="小巷">
+          <div class="photo-details">
+            <strong>地点:</strong> 小巷<br>
+            <strong>参数:</strong> ISO 160 · 1/125s · f/1.4
+          </div>
+        </div>
+        <div class="photo-item" draggable="true">
+          <img src="img/card1 05.jpg" alt="大桥">
+          <div class="photo-details">
+            <strong>地点:</strong> 大桥<br>
+            <strong>参数:</strong> ISO 200 · 1/100s · f/1.2
+          </div>
+        </div>
+        <div class="photo-item" draggable="true">
+          <img src="img/card1 06.jpg" alt="越王勾践剑">
+          <div class="photo-details">
+            <strong>地点:</strong> 湖北省博物馆<br>
+            <strong>参数:</strong> ISO 800 · 1/80s · f/1.2
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 卡片2 -->
+    <div class="card">
+      <div class="card-preview">
+        <h3>上海</h3>
+        <p>2024.10</p>
+      </div>
+      <div class="photo-grid">
+        <div class="photo-item" draggable="true">
+          <img src="img/card2 01.jpg" alt="上海埃及展">
+          <div class="photo-details">
+            <strong>地点:</strong> 上海博物馆<br>
+            <strong>设备:</strong> Nikonmat kodak cp200<br>
+            <strong>参数:</strong> ISO 200 · 1/50s · f/1.2
+          </div>
+        </div>
+        <div class="photo-item" draggable="true">
+          <img src="img/card2 02.jpg" alt="上海埃及展">
+          <div class="photo-details">
+            <strong>地点:</strong> 上海博物馆<br>
+            <strong>设备:</strong> Nikonmat kodak cp200<br>
+            <strong>参数:</strong> ISO 200 · 1/20s · f/1.2
+          </div>
+        </div>
+        <div class="photo-item" draggable="true">
+          <img src="img/card2 03.jpg" alt="上海植物园">
+          <div class="photo-details">
+            <strong>地点:</strong> 上海植物园<br>
+            <strong>设备:</strong> Nikonmat kodak cp200<br>
+            <strong>参数:</strong> ISO 200 · 1/200s · f/4.0
+          </div>
+        </div>
+        <div class="photo-item" draggable="true">
+          <img src="img/card2 04.jpg" alt="上海植物园">
+          <div class="photo-details">
+            <strong>地点:</strong> 上海植物园<br>
+            <strong>设备:</strong> Nikonmat kodak cp200<br>
+            <strong>参数:</strong> ISO 200 · 1/200s · f/4.0
+          </div>
+        </div>
+        <div class="photo-item" draggable="true">
+          <img src="img/card2 05.jpg" alt="上海植物园">
+          <div class="photo-details">
+            <strong>地点:</strong> 上海植物园<br>
+            <strong>设备:</strong> Nikonmat kodak cp200<br>
+            <strong>参数:</strong> ISO 200 · 1/200s · f/4.0
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 卡片3 -->
+    <div class="card">
+      <div class="card-preview">
+        <h3>安徽</h3>
+        <p>2025.1</p>
+      </div>
+      <div class="photo-grid">
+        <div class="photo-item" draggable="true">
+          <img src="img/card3 01.jpg" alt="西递">
+          <div class="photo-details">
+            <strong>地点:</strong> 西递<br>
+            <strong>参数:</strong> ISO 100 · 1/320s · f/4.0
+          </div>
+        </div>
+        <div class="photo-item" draggable="true">
+          <img src="img/card3 02.jpg" alt="宏村">
+          <div class="photo-details">
+            <strong>地点:</strong> 宏村<br>
+            <strong>参数:</strong> ISO 200 · 1/125s · f/5.6
+          </div>
+        </div>
+        <div class="photo-item" draggable="true">
+          <img src="img/card3 03.jpg" alt="西递">
+          <div class="photo-details">
+            <strong>地点:</strong> 西递邮局<br>
+            <strong>参数:</strong> ISO 125 · 1/400s · f/5.6
+          </div>
+        </div>
+        <div class="photo-item" draggable="true">
+          <img src="img/card3 04.jpg" alt="西递">
+          <div class="photo-details">
+            <strong>地点:</strong> 西递<br>
+            <strong>参数:</strong> ISO 125 · 1/125s · f/4.0
+          </div>
+        </div>
+        <div class="photo-item" draggable="true">
+          <img src="img/card3 05.jpg" alt="宏村">
+          <div class="photo-details">
+            <strong>地点:</strong> 宏村<br>
+            <strong>参数:</strong> ISO 800 · 1/50s · f/1.4
+          </div>
+        </div>
+        <div class="photo-item" draggable="true">
+          <img src="img/card3 06.jpg" alt="宏村">
+          <div class="photo-details">
+            <strong>地点:</strong> 宏村<br>
+            <strong>参数:</strong> ISO 200 · 1/160s · f/8.0
+          </div>
+        </div>
+        <div class="photo-item" draggable="true">
+          <img src="img/card3 07.jpg" alt="宏村">
+          <div class="photo-details">
+            <strong>地点:</strong> 宏村<br>
+            <strong>参数:</strong> ISO 100 · 1/100s · f/11.0
+          </div>
+        </div>
+        <div class="photo-item" draggable="true">
+          <img src="img/card3 08.jpg" alt="宏村">
+          <div class="photo-details">
+            <strong>地点:</strong> 宏村<br>
+            <strong>参数:</strong> ISO 100 · 1/200s · f/8.0
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 下载框 -->
+<div class="shopping-cart" id="shoppingCart" aria-label="下载框">
+  <i class="fas fa-shopping-cart"></i>
+  <div class="badge" id="cartBadge">0</div>
+</div>
+
+<!-- 下载下拉框 -->
+<div class="cart-dropdown" id="cartDropdown">
+  <div class="cart-header">
+    <h3>我的收藏</h3>
+    <i class="fas fa-times" id="closeCart" aria-label="关闭下载框"></i>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <!-- 下载项将在这里动态添加 -->
+  </div>
+  <div class="cart-actions">
+    <button class="cart-btn cart-clear" id="clearCart">清空</button>
+    <button class="cart-btn cart-download" id="downloadAll">下载全部</button>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+  // --- 下载框相关功能 ---
+  const shoppingCart = document.getElementById('shoppingCart');
+  const cartDropdown = document.getElementById('cartDropdown');
+  const cartBadge = document.getElementById('cartBadge');
+  const cartItems = document.getElementById('cartItems');
+  const closeCart = document.getElementById('closeCart');
+  const clearCart = document.getElementById('clearCart');
+  const downloadAll = document.getElementById('downloadAll');
+  
+  // 从本地存储加载下载框
+  let cart = JSON.parse(localStorage.getItem('photoCart')) || [];
+  
+  // 更新下载框显示
+  updateCart();
+  
+  // 面板点击功能
+  const panels = document.querySelectorAll('.panel');
+  panels.forEach(panel => {
+    panel.addEventListener('click', () => {
+      removeActiveClasses();
+      panel.classList.add('active');
+    });
+  });
+
+  function removeActiveClasses() {
+    panels.forEach(panel => {
+      panel.classList.remove('active');
+    });
+  }
+  
+  // 下载框点击事件
+  shoppingCart.addEventListener('click', function(e) {
+    e.stopPropagation();
+    cartDropdown.classList.toggle('show');
+  });
+  
+  // 关闭下载框
+  closeCart.addEventListener('click', function(e) {
+    e.stopPropagation();
+    cartDropdown.classList.remove('show');
+  });
+  
+  // 清空下载框
+  clearCart.addEventListener('click', function() {
+    if (cart.length === 0) return;
+    
+    if (confirm('确定要清空下载框吗？')) {
+      cart = [];
+      saveCart();
+      updateCart();
+      showNotification('下载框已清空');
+    }
+  });
+  
+  // 下载全部
+  downloadAll.addEventListener('click', function() {
+    if (cart.length === 0) {
+      showNotification('下载框为空，请先添加图片');
+      return;
+    }
+    
+    // 模拟下载 
+    showNotification(`开始下载 ${cart.length} 张图片`);
+  });
+  
+  // 点击页面其他区域关闭下载框
+  document.addEventListener('click', function() {
+    cartDropdown.classList.remove('show');
+  });
+  
+  // 初始化拖拽功能
+  function initDragAndDrop() {
+    const photoItems = document.querySelectorAll('.photo-item');
+    
+    photoItems.forEach(item => {
+      item.addEventListener('dragstart', function(e) {
+        this.classList.add('dragging');
+        
+        // 设置拖拽数据
+        const img = this.querySelector('img');
+        e.dataTransfer.setData('text/plain', JSON.stringify({
+          src: img.src,
+          alt: img.alt,
+          title: img.dataset.title,
+          desc: img.dataset.desc
+        }));
+      });
+      
+      item.addEventListener('dragend', function() {
+        this.classList.remove('dragging');
+      });
+    });
+    
+    // 下载框接收拖拽
+    shoppingCart.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      this.style.transform = 'scale(1.1)';
+    });
+    
+    shoppingCart.addEventListener('dragleave', function() {
+      this.style.transform = 'scale(1)';
+    });
+    
+    shoppingCart.addEventListener('drop', function(e) {
+      e.preventDefault();
+      this.style.transform = 'scale(1)';
+      
+      const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+      
+      // 检查是否已存在
+      if (!cart.some(item => item.src === data.src)) {
+        cart.push(data);
+        saveCart();
+        updateCart();
+        
+        // 显示添加成功动画
+        const badge = document.getElementById('cartBadge');
+        badge.style.transform = 'scale(1.5)';
+        setTimeout(() => {
+          badge.style.transform = 'scale(1)';
+        }, 300);
+        
+        showNotification('已添加到收藏');
+      } else {
+        showNotification('该图片已在收藏中');
+      }
+    });
+  }
+  
+  // 更新下载框显示
+  function updateCart() {
+    // 更新徽章
+    cartBadge.textContent = cart.length;
+    cartBadge.style.display = cart.length > 0 ? 'flex' : 'none';
+    
+    // 更新下载项列表
+    cartItems.innerHTML = '';
+    
+    if (cart.length === 0) {
+      cartItems.innerHTML = '<p class="empty-cart">下载框为空</p>';
+      return;
+    }
+    
+    cart.forEach((item, index) => {
+      const cartItem = document.createElement('div');
+      cartItem.className = 'cart-item';
+      cartItem.innerHTML = `
+        <img src="${item.src}" alt="${item.alt}" onerror="this.src='img/bac 4.png'">
+        <div class="cart-item-info">
+          <strong>${item.title}</strong><br>
+          <small>${item.desc}</small>
+        </div>
+        <div class="cart-item-remove" data-index="${index}" aria-label="删除">
+          <i class="fas fa-times"></i>
+        </div>
+      `;
+      cartItems.appendChild(cartItem);
+    });
+    
+    // 添加删除事件
+    document.querySelectorAll('.cart-item-remove').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const index = parseInt(this.dataset.index);
+        cart.splice(index, 1);
+        saveCart();
+        updateCart();
+        showNotification('已从收藏中移除');
+      });
+    });
+  }
+  
+  // 保存下载框到本地存储
+  function saveCart() {
+    localStorage.setItem('photoCart', JSON.stringify(cart));
+  }
+  
+  // 显示通知
+  function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    notification.style.position = 'fixed';
+    notification.style.bottom = '20px';
+    notification.style.left = '50%';
+    notification.style.transform = 'translateX(-50%)';
+    notification.style.backgroundColor = '#16423c';
+    notification.style.color = 'white';
+    notification.style.padding = '10px 20px';
+    notification.style.borderRadius = '4px';
+    notification.style.zIndex = '1001';
+    notification.style.boxShadow = '0 2px 10px rgba(0,0,0,0.3)';
+    notification.style.animation = 'fadeInOut 2.5s ease-in-out';
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.remove();
+    }, 2500);
+  }
+  
+  // 添加CSS动画
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+      20% { opacity: 1; transform: translateX(-50%) translateY(0); }
+      80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+    }
+  `;
+  document.head.appendChild(style);
+
+  // 初始化拖拽功能
+  initDragAndDrop();
+
+  // --- 图片查看器功能 ---
+  const imageViewer = document.getElementById('imageViewer');
+  const viewedImage = document.getElementById('viewedImage');
+  const imageInfo = document.getElementById('imageInfo');
+  const closeImageViewer = document.getElementById('closeImageViewer');
+  const prevImage = document.getElementById('prevImage');
+  const nextImage = document.getElementById('nextImage');
+
+  let currentImageIndex = 0;
+  let allImages = [];
+
+  // 初始化图片点击事件
+  function initImageClick() {
+    const photoItems = document.querySelectorAll('.photo-item');
+    
+    // 收集所有图片数据
+    allImages = Array.from(photoItems).map(item => {
+      const img = item.querySelector('img');
+      const details = item.querySelector('.photo-details');
+      return {
+        src: img.src,
+        alt: img.alt,
+        title: img.dataset.title || img.alt,
+        desc: img.dataset.desc || '',
+        details: details ? details.innerHTML : ''
+      };
+    });
+    
+    // 添加点击事件
+    photoItems.forEach((item, index) => {
+      const img = item.querySelector('img');
+      img.addEventListener('click', (e) => {
+        e.stopPropagation();
+        currentImageIndex = index;
+        openImageViewer(index);
+      });
+    });
+  }
+
+  // 打开图片查看器
+  function openImageViewer(index) {
+    const image = allImages[index];
+    viewedImage.src = image.src;
+    viewedImage.alt = image.alt;
+    
+    // 设置图片信息
+    imageInfo.innerHTML = `
+      <strong>${image.title}</strong><br>
+      ${image.desc}<br>
+      ${image.details}
+    `;
+    
+    imageViewer.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  // 关闭图片查看器
+  function closeImageViewerHandler() {
+    imageViewer.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  // 上一张图片
+  function showPrevImage() {
+    currentImageIndex = (currentImageIndex - 1 + allImages.length) % allImages.length;
+    openImageViewer(currentImageIndex);
+  }
+
+  // 下一张图片
+  function showNextImage() {
+    currentImageIndex = (currentImageIndex + 1) % allImages.length;
+    openImageViewer(currentImageIndex);
+  }
+
+  // 键盘导航
+  function handleKeyDown(e) {
+    if (!imageViewer.classList.contains('show')) return;
+    
+    switch(e.key) {
+      case 'Escape':
+        closeImageViewerHandler();
+        break;
+      case 'ArrowLeft':
+        showPrevImage();
+        break;
+      case 'ArrowRight':
+        showNextImage();
+        break;
+    }
+  }
+
+  // 初始化事件监听
+  closeImageViewer.addEventListener('click', closeImageViewerHandler);
+  prevImage.addEventListener('click', showPrevImage);
+  nextImage.addEventListener('click', showNextImage);
+  document.addEventListener('keydown', handleKeyDown);
+
+  // 点击图片查看器背景关闭
+  imageViewer.addEventListener('click', (e) => {
+    if (e.target === imageViewer) {
+      closeImageViewerHandler();
+    }
+  });
+
+  // 初始化图片点击功能
+  initImageClick();
+});
+</script>
+
+<!-- 图片查看器 -->
+<div class="image-viewer" id="imageViewer">
+  <div class="image-viewer-content">
+    <span class="image-viewer-close" id="closeImageViewer">&times;</span>
+    <div class="image-viewer-nav image-viewer-prev" id="prevImage">&lt;</div>
+    <img id="viewedImage" src="" alt="">
+    <div class="image-viewer-nav image-viewer-next" id="nextImage">&gt;</div>
+    <div class="image-viewer-info" id="imageInfo"></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-content">
+    <div class="footer-left">© 2025 田笑喧(302023572097) 版权所有</div>
+    <div class="footer-center">技术支持：田笑喧(302023572097)</div>
+    <div class="footer-right">
+      分享：
+      <a href="#" title="分享到微博">微博</a> |
+      <a href="#" title="分享到微信">微信</a> |
+      <a href="#" title="分享到QQ">QQ</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
