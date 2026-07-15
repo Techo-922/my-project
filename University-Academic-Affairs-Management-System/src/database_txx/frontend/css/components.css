@@ -1,0 +1,632 @@
+/* 组件样式文件 */
+
+/* 数据表格组件 */
+.data-table {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.data-table .table-header {
+    background: #f8f9fa;
+    padding: 15px 20px;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.data-table .table-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.data-table .table-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.data-table .el-table {
+    border: none;
+}
+
+.data-table .el-table th {
+    background-color: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.data-table .el-table td {
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.data-table .el-table tr:hover td {
+    background-color: #f8f9fa;
+}
+
+/* 搜索框组件 */
+.search-component {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: end;
+}
+
+.search-form .form-item {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+}
+
+.search-form .form-item label {
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #495057;
+    font-size: 14px;
+}
+
+.search-form .form-actions {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+}
+
+/* 统计卡片组件 */
+.stat-card-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.stat-card .card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: white;
+}
+
+.stat-card .card-icon.primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.stat-card .card-icon.success {
+    background: linear-gradient(135deg, #56ab2f, #a8e6cf);
+}
+
+.stat-card .card-icon.warning {
+    background: linear-gradient(135deg, #f7971e, #ffd200);
+}
+
+.stat-card .card-icon.danger {
+    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+}
+
+.stat-card .card-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 4px;
+}
+
+.stat-card .card-label {
+    font-size: 14px;
+    color: #6c757d;
+    margin-bottom: 12px;
+}
+
+.stat-card .card-trend {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+}
+
+.stat-card .trend-up {
+    color: #28a745;
+}
+
+.stat-card .trend-down {
+    color: #dc3545;
+}
+
+.stat-card .trend-icon {
+    margin-right: 4px;
+}
+
+/* 表单组件 */
+.form-component {
+    background: white;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.form-component .form-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.form-component .form-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.form-component .form-subtitle {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.form-grid .el-form-item {
+    margin-bottom: 0;
+}
+
+.form-actions {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* 模态框组件 */
+.modal-component .el-dialog {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.modal-component .el-dialog__header {
+    background: #f8f9fa;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.modal-component .el-dialog__title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.modal-component .el-dialog__body {
+    padding: 24px;
+}
+
+.modal-component .el-dialog__footer {
+    padding: 16px 24px;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+}
+
+/* 标签页组件 */
+.tab-component .el-tabs__header {
+    margin-bottom: 20px;
+}
+
+.tab-component .el-tabs__nav-wrap {
+    background: white;
+    border-radius: 8px;
+    padding: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tab-component .el-tabs__item {
+    border-radius: 6px;
+    margin: 0 2px;
+    transition: all 0.3s ease;
+}
+
+.tab-component .el-tabs__item.is-active {
+    background: #667eea;
+    color: white;
+}
+
+.tab-component .el-tabs__active-bar {
+    display: none;
+}
+
+/* 面包屑组件 */
+.breadcrumb-component {
+    background: white;
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.breadcrumb-component .el-breadcrumb {
+    font-size: 14px;
+}
+
+.breadcrumb-component .el-breadcrumb__item:last-child .el-breadcrumb__inner {
+    color: #667eea;
+    font-weight: 500;
+}
+
+/* 分页组件 */
+.pagination-component {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pagination-component .el-pagination {
+    font-weight: 500;
+}
+
+.pagination-component .el-pagination .el-pager li.active {
+    background: #667eea;
+    color: white;
+}
+
+/* 加载组件 */
+.loading-component {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: #6c757d;
+}
+
+.loading-component .loading-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    animation: spin 1s linear infinite;
+}
+
+.loading-component .loading-text {
+    font-size: 16px;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 空状态组件 */
+.empty-component {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: #6c757d;
+}
+
+.empty-component .empty-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    color: #dee2e6;
+}
+
+.empty-component .empty-title {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #495057;
+}
+
+.empty-component .empty-description {
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+/* 操作按钮组 */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.action-buttons .el-button {
+    margin: 0;
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.action-buttons .el-button + .el-button {
+    margin-left: 0;
+}
+
+/* 状态指示器 */
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-indicator.active {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.status-indicator.inactive {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-indicator.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-indicator::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.status-indicator.active::before {
+    background: #17a2b8;
+}
+
+.status-indicator.inactive::before {
+    background: #dc3545;
+}
+
+.status-indicator.pending::before {
+    background: #ffc107;
+}
+
+/* 进度条组件 */
+.progress-component {
+    margin: 16px 0;
+}
+
+.progress-component .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.progress-component .progress-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #495057;
+}
+
+.progress-component .progress-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #667eea;
+}
+
+.progress-component .el-progress-bar__outer {
+    background: #e9ecef;
+    border-radius: 10px;
+}
+
+.progress-component .el-progress-bar__inner {
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 10px;
+}
+
+/* 头像组件 */
+.avatar-component {
+    position: relative;
+    display: inline-block;
+}
+
+.avatar-component .avatar-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e9ecef;
+}
+
+.avatar-component .avatar-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.avatar-component .avatar-badge.online {
+    background: #28a745;
+}
+
+.avatar-component .avatar-badge.offline {
+    background: #6c757d;
+}
+
+.avatar-component .avatar-badge.busy {
+    background: #dc3545;
+}
+
+/* 标签组件 */
+.tag-component {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    margin: 2px;
+}
+
+.tag-component.primary {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.tag-component.success {
+    background: #e8f5e8;
+    color: #2e7d32;
+}
+
+.tag-component.warning {
+    background: #fff8e1;
+    color: #f57c00;
+}
+
+.tag-component.danger {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.tag-component.info {
+    background: #e0f2f1;
+    color: #00695c;
+}
+
+/* 工具提示组件 */
+.tooltip-component {
+    position: relative;
+    cursor: help;
+}
+
+.tooltip-component:hover .tooltip-content {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-8px);
+}
+
+.tooltip-content {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-4px);
+    background: #2c3e50;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.tooltip-content::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: #2c3e50;
+}
+
+/* 响应式组件 */
+@media (max-width: 768px) {
+    .stat-card-group {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .search-form {
+        flex-direction: column;
+    }
+    
+    .search-form .form-actions {
+        margin-left: 0;
+        justify-content: center;
+    }
+    
+    .action-buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .data-table .table-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .data-table .table-actions {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-component,
+    .search-component,
+    .data-table {
+        margin: 0 -10px;
+        border-radius: 0;
+    }
+    
+    .stat-card {
+        margin: 0 -10px;
+        border-radius: 0;
+    }
+    
+    .modal-component .el-dialog {
+        width: 95% !important;
+        margin: 0 auto;
+    }
+}

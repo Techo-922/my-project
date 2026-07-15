@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>高校教务管理系统 - 登录</title>
+  <link rel="icon" href="https://via.placeholder.com/32/409eff/ffffff?text=S" />
+  <!-- 图标库 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <!-- Element UI -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-ui@2/lib/theme-chalk/index.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      width: 420px;
+      max-width: 90vw;
+      backdrop-filter: blur(10px);
+    }
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .login-header h1 {
+      color: #333;
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+    }
+    .login-header .subtitle {
+      color: #666;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+    .user-type-selector {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .user-type-card {
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: white;
+      user-select: none;
+    }
+    .user-type-card:hover {
+      border-color: #409eff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(64, 158, 255, 0.15);
+    }
+    .user-type-card.active {
+      border-color: #409eff;
+      background: #f0f9ff;
+    }
+    .user-type-card i {
+      font-size: 24px;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .user-type-card .title {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+    }
+    .user-type-card .desc {
+      font-size: 12px;
+      color: #666;
+    }
+    .login-footer {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+    .login-footer a {
+      color: #409eff;
+      text-decoration: none;
+      font-size: 14px;
+      margin: 0 10px;
+    }
+    .login-footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div id="loginApp">
+    <div class="login-container">
+      <div class="login-header">
+        <i class="fas fa-graduation-cap" style="font-size: 48px; color: #409eff; margin-bottom: 15px"></i>
+        <h1>高校教务管理系统</h1>
+        <p class="subtitle">请选择用户类型并登录</p>
+      </div>
+
+      <div class="login-form">
+        <div class="form-group">
+          <label>用户类型</label>
+          <div class="user-type-selector">
+            <div class="user-type-card" :class="{ active: userType === 'admin' }" @click="selectUserType('admin')">
+              <i class="fas fa-user-shield" style="color: #e74c3c"></i>
+              <div class="title">系统管理员</div>
+              <div class="desc">完整系统权限</div>
+            </div>
+            <div class="user-type-card" :class="{ active: userType === 'teacher' }" @click="selectUserType('teacher')">
+              <i class="fas fa-chalkboard-teacher" style="color: #3498db"></i>
+              <div class="title">教师</div>
+              <div class="desc">教学管理权限</div>
+            </div>
+            <div class="user-type-card" :class="{ active: userType === 'student' }" @click="selectUserType('student')">
+              <i class="fas fa-user-graduate" style="color: #2ecc71"></i>
+              <div class="title">学生</div>
+              <div class="desc">个人信息查看</div>
+            </div>
+            <div class="user-type-card" :class="{ active: userType === 'staff' }" @click="selectUserType('staff')">
+              <i class="fas fa-user-tie" style="color: #f39c12;"></i>
+              <div class="title">教务人员</div>
+              <div class="desc">教务管理权限</div>
+            </div>
+          </div>
+        </div>
+
+        <el-form :model="loginForm" :rules="loginRules" ref="loginForm" label-width="0">
+          <el-form-item prop="username">
+            <el-input v-model="loginForm.username" placeholder="请输入用户名" size="large" prefix-icon="el-icon-user"></el-input>
+          </el-form-item>
+          <el-form-item prop="password">
+            <el-input type="password" v-model="loginForm.password" placeholder="请输入密码" size="large" prefix-icon="el-icon-lock" @keyup.enter.native="handleLogin"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" size="large" style="width: 100%" :loading="loginLoading" @click="handleLogin">
+              <i class="fas fa-sign-in-alt"></i> 登录
+            </el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+
+      <div class="login-footer">
+        <a href="#" @click.prevent="showHelp">使用帮助</a>
+        <a href="#" @click.prevent="showAbout">关于系统</a>
+        <a href="#" @click.prevent="showContact">联系我们</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vue（完整版） -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <!-- Element UI -->
+  <script src="https://cdn.jsdelivr.net/npm/element-ui@2/lib/index.js"></script>
+  <!-- 放在 Vue 和 Element UI 后面即可 -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <!-- 启用 Element -->
+  <script>
+    Vue.use(ELEMENT);
+  </script>
+
+  <script>
+    new Vue({
+      el: "#loginApp",
+      data() {
+        return {
+          userType: "admin",
+          loginLoading: false,
+          loginForm: {
+            username: "",
+            password: ""
+          },
+          loginRules: {
+            username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+            password: [{ required: true, message: "请输入密码", trigger: "blur" }]
+          }
+        };
+      },
+      methods: {
+        selectUserType(type) {
+          this.userType = type;
+        },
+        handleLogin() {
+          this.$refs.loginForm.validate((valid) => {
+            if (valid) {
+              this.loginLoading = true;
+
+              // 调用后端接口
+              axios.post("http://localhost:8000/login", {
+                username: this.loginForm.username,
+                password: this.loginForm.password
+              }).then(res => {
+                const userInfo = res.data.data;
+                userInfo.loginTime = new Date().toISOString();
+
+                localStorage.setItem('userInfo', JSON.stringify(userInfo));
+                localStorage.setItem('token', userInfo.token);
+                // 假设登录成功后拿到了学生学号和角色
+
+                this.$message.success("登录成功！");
+                setTimeout(() => {
+                  if (userInfo.role === 'student') {
+                    window.location.href = "students.html";  // 学生端首页
+                  } else if (userInfo.role === 'teacher') {
+                    window.location.href = "teacher.html";  // 教师端首页
+                  } else {
+                    window.location.href = "index.html";     // 其他角色默认首页
+                  }
+                }, 1000);
+              }).catch(err => {
+                this.$message.error(err.response.data.detail || "登录失败");
+              }).finally(() => {
+                this.loginLoading = false;
+              });
+            }
+          });
+        },
+        showHelp() {
+          this.$alert("请选择用户类型，输入用户名和密码后点击登录。", "使用帮助", { confirmButtonText: "确定" });
+        },
+        showAbout() {
+          this.$alert("学生信息管理系统 v1.0\n技术栈：Vue + Element UI\n开发团队：数据库课程设计小组", "关于系统", { confirmButtonText: "确定" });
+        },
+        showContact() {
+          this.$alert("支持邮箱：support@example.com\n电话：400-123-4567", "联系我们", { confirmButtonText: "确定" });
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高校教务管理系统</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
+    <!-- 引入图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- 引入Element UI -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 顶部导航栏 -->
+        <header class="header">
+            <div class="header-container">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>学生信息管理系统</span>
+                </div>
+                <nav class="nav-menu">
+                    <ul>
+                        <li><a href="#" @click="setActiveTab('dashboard')" :class="{active: activeTab === 'dashboard'}"><i class="fas fa-tachometer-alt"></i> 仪表盘</a></li>
+                        <li><a href="#" @click="setActiveTab('students')" :class="{active: activeTab === 'students'}"><i class="fas fa-user-graduate"></i> 学生管理</a></li>
+                        <li><a href="#" @click="setActiveTab('teachers')" :class="{active: activeTab === 'teachers'}"><i class="fas fa-chalkboard-teacher"></i> 教师管理</a></li>
+                        <li><a href="#" @click="setActiveTab('courses')" :class="{active: activeTab === 'courses'}"><i class="fas fa-book"></i> 课程管理</a></li>
+                        <li><a href="#" @click="setActiveTab('departments')" :class="{active: activeTab === 'departments'}"><i class="fas fa-building"></i> 专业管理</a></li>
+                        <li><a href="#" @click="setActiveTab('grades')" :class="{active: activeTab === 'grades'}"><i class="fas fa-chart-line"></i> 成绩管理</a></li>
+                        <li><a href="#" @click="setActiveTab('qa')" :class="{active: activeTab === 'qa'}"><i class="fas fa-file-alt"></i> 系统问答</a></li>
+                    </ul>
+                </nav>
+                <div class="user-info">
+                    <el-dropdown @command="handleUserCommand">
+                        <span class="user-avatar">
+                            <img :src="userInfo.avatar || '../images/default-avatar.png'" :alt="userInfo.name">
+                            <span>{{ userInfo.name }}</span>
+                            <i class="el-icon-arrow-down"></i>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item command="profile"><i class="fas fa-user"></i> 个人资料</el-dropdown-item>
+                            <el-dropdown-item command="settings"><i class="fas fa-cog"></i> 系统设置</el-dropdown-item>
+                            <el-dropdown-item command="logout" divided><i class="fas fa-sign-out-alt"></i> 退出登录</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+            <!-- 仪表盘 -->
+            <div v-show="activeTab === 'dashboard'" class="tab-content">
+                <div class="dashboard">
+                    <h2><i class="fas fa-tachometer-alt"></i> 系统仪表盘</h2>
+
+                    <!-- 统计卡片 -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon student">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>{{ dashboardData.studentCount }}</h3>
+                                <p>在校学生</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon teacher">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>{{ dashboardData.teacherCount }}</h3>
+                                <p>在职教师</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon course">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>{{ dashboardData.courseCount }}</h3>
+                                <p>开设课程</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon department">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>{{ dashboardData.departmentCount }}</h3>
+                                <p>院系部门</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 图表区域 -->
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <h3>学生专业分布</h3>
+                            <div id="majorChart" class="chart-container"></div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>成绩分布统计</h3>
+                            <div id="gradeChart" class="chart-container"></div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>生源地统计</h3>
+                            <div id="hometownChart" class="chart-container"></div>
+                        </div>
+<!--                        <div class="chart-card">-->
+<!--                            <h3>课程选修情况</h3>-->
+<!--                            <div id="enrollmentChart" class="chart-container"></div>-->
+<!--                        </div>-->
+                    </div>
+
+                    <!-- 快速操作 -->
+                    <div class="quick-actions">
+                        <h3>快速操作</h3>
+                        <div class="action-buttons">
+                            <el-button type="primary" @click="quickAction('addStudent')"><i class="fas fa-plus"></i> 添加学生</el-button>
+                            <el-button type="success" @click="quickAction('addTeacher')"><i class="fas fa-plus"></i> 添加教师</el-button>
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 学生管理 -->
+            <div v-show="activeTab === 'students'" class="tab-content">
+                <div class="student-management">
+                    <h2><i class="fas fa-user-graduate"></i> 学生管理</h2>
+
+                    <!-- 搜索和操作栏 -->
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <el-input
+                                v-model="studentSearch.keyword"
+                                placeholder="请输入姓名"
+                                prefix-icon="el-icon-search"
+                                @keyup.enter.native="searchStudents"
+                                clearable>
+                            </el-input>
+                            <el-select v-model="studentSearch.department" placeholder="选择院系" clearable @change="searchStudents" style="color: black;">
+                                <el-option
+                                        v-for="dept in departments"
+                                        :key="dept.dept_no"
+                                        :label="dept.dept_name"
+                                        :value="dept.dept_no">
+                                </el-option>
+                                </el-option>
+                            </el-select>
+
+                            <el-select v-model="studentSearch.grade" placeholder="选择年级" clearable @change="searchStudents">
+                                <el-option label="2024级" value="2024"></el-option>
+                                <el-option label="2023级" value="2023"></el-option>
+                                <el-option label="2022级" value="2022"></el-option>
+                                <el-option label="2021级" value="2021"></el-option>
+                            </el-select>
+                            <!-- 选择生源地 -->
+                            <el-select v-model="studentSearch.region" placeholder="选择生源地" clearable @change="searchStudents">
+                                <el-option
+                                        v-for="region in regions"
+                                        :key="region.region_id"
+                                        :label="region.region_name"
+                                        :value="region.region_id">
+                                </el-option>
+                            </el-select>
+                            <el-button type="primary" @click="searchStudents"><i class="fas fa-search"></i> 搜索</el-button>
+                        </div>
+                        <div class="action-buttons">
+                            <el-button type="primary" @click="showAddStudentDialog"><i class="fas fa-plus"></i> 添加学生</el-button>
+                            <el-button type="success" @click="importStudents"><i class="fas fa-upload"></i> 批量导入</el-button>
+                            <el-button type="info" @click="exportStudents"><i class="fas fa-download"></i> 导出数据</el-button>
+                        </div>
+                    </div>
+
+                    <!-- 学生列表表格 -->
+                    <div class="table-container">
+                        <el-table
+                            :data="students"
+                            v-loading="loading"
+                            stripe
+                            border
+                            style="width: 100%"
+                            @selection-change="handleStudentSelectionChange"
+                        >
+                        <el-table-column type="selection" width="55"></el-table-column>
+
+                        <el-table-column prop="sno" label="学号" width="120" sortable></el-table-column>
+                        <el-table-column prop="sname" label="姓名" width="100"></el-table-column>
+                        <el-table-column prop="sex" label="性别" width="60">
+                        <template slot-scope="scope">
+                        <el-tag :type="scope.row.sex === '男' ? 'primary' : 'success'" size="mini">
+                            {{ scope.row.sex }}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+                        <el-table-column prop="age" label="年龄" width="60"></el-table-column>
+                        <el-table-column prop="dept_no" label="院系编号" width="110"></el-table-column>
+                        <el-table-column prop="dept_name" label="专业名称" width="110"></el-table-column>
+                        <el-table-column prop="class_id" label="班级" width="110"></el-table-column>
+                        <el-table-column prop="start_date" label="入学时间" width="120"></el-table-column>
+                        <el-table-column prop="credit_hours" label="学分" width="110"></el-table-column>
+
+                <el-table-column label="操作" width="200" fixed="right">
+                    <template slot-scope="scope">
+                        <el-button size="mini" @click="viewStudent(scope.row)"><i class="fas fa-eye"></i></el-button>
+                        <el-button size="mini" type="primary" @click="editStudent(scope.row)"><i class="fas fa-edit"></i></el-button>
+                        <el-button size="mini" type="danger" @click="deleteStudent(scope.row)"><i class="fas fa-trash"></i></el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+                        <!-- 分页 -->
+                        <div class="pagination">
+                            <el-pagination
+                                @size-change="handleSizeChange"
+                                @current-change="handleCurrentChange"
+                                :current-page="pagination.currentPage"
+                                :page-sizes="[10, 20, 50, 100]"
+                                :page-size="pagination.pageSize"
+                                layout="total, sizes, prev, pager, next, jumper"
+                                :total="pagination.total">
+                            </el-pagination>
+                        </div>
+                    </div>
+                </div>
+                <!-- 添加学生 对话框 -->
+                <el-dialog
+                        title="添加学生"
+                        :visible.sync="addStudentDialog.visible"
+                        width="500px"
+                        :before-close="handleAddStudentCancel"
+                >
+                    <el-form :model="addStudentForm" label-width="80px">
+                        <el-form-item label="学号">
+                            <el-input v-model="addStudentForm.sno"></el-input>
+                        </el-form-item>
+                        <el-form-item label="姓名">
+                            <el-input v-model="addStudentForm.sname"></el-input>
+                        </el-form-item>
+                        <el-form-item label="性别">
+                            <el-select v-model="addStudentForm.sex" placeholder="选择性别">
+                                <el-option label="男" value="男"></el-option>
+                                <el-option label="女" value="女"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="年龄">
+                            <el-input type="number" v-model="addStudentForm.age"></el-input>
+                        </el-form-item>
+                        <el-form-item label="院系">
+                            <el-select v-model="addStudentForm.dept_no" placeholder="选择院系">
+                                <el-option
+                                        v-for="dept in departments"
+                                        :key="dept.dept_no"
+                                        :label="dept.dept_name"
+                                        :value="dept.dept_no">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="班级">
+                            <el-input v-model="addStudentForm.class_id"></el-input>
+                        </el-form-item>
+                        <el-form-item label="入学时间">
+                            <el-date-picker
+                                    v-model="addStudentForm.start_date"
+                                    type="date"
+                                    placeholder="选择日期"
+                                    style="width: 100%;"
+                            ></el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="学分">
+                            <el-input type="number" v-model="addStudentForm.credit_hours"></el-input>
+                        </el-form-item>
+                    </el-form>
+                    <template #footer>
+                        <el-button @click="handleAddStudentCancel">取消</el-button>
+                        <el-button type="primary" @click="submitAddStudent">提交</el-button>
+                    </template>
+                </el-dialog>
+                <!-- 上传文件 对话框 -->
+                <el-dialog
+                        title="批量导入学生"
+                        :visible.sync="importDialogVisible"
+                        width="400px"
+                >
+                    <el-upload
+                            class="upload-demo"
+                            drag
+                            action=""
+                            :auto-upload="false"
+                            :on-change="handleFileChange"
+                            :file-list="fileList"
+                    >
+                        <i class="el-icon-upload"></i>
+                        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                        <div class="el-upload__tip" slot="tip">支持 .xlsx 文件</div>
+                    </el-upload>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="importDialogVisible = false">取消</el-button>
+                        <el-button type="primary" @click="submitImport">上传并导入</el-button>
+                    </span>
+                </el-dialog>
+                <!-- 编辑学生 对话框 -->
+                <el-dialog
+                        title="编辑学生"
+                        :visible.sync="editStudentDialog.visible"
+                        width="500px"
+                        :before-close="handleEditStudentCancel"
+                >
+                    <el-form :model="editStudentForm" label-width="80px">
+                        <el-form-item label="学号">
+                            <el-input v-model="editStudentForm.sno" disabled></el-input> <!-- 学号不可改 -->
+                        </el-form-item>
+                        <el-form-item label="姓名">
+                            <el-input v-model="editStudentForm.sname"></el-input>
+                        </el-form-item>
+                        <el-form-item label="性别">
+                            <el-select v-model="editStudentForm.sex" placeholder="选择性别">
+                                <el-option label="男" value="男"></el-option>
+                                <el-option label="女" value="女"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="年龄">
+                            <el-input type="number" v-model="editStudentForm.age"></el-input>
+                        </el-form-item>
+                        <el-form-item label="院系">
+                            <el-select v-model="editStudentForm.dept_no" placeholder="选择院系">
+                                <el-option
+                                        v-for="dept in departments"
+                                        :key="dept.id"
+                                        :label="dept.name"
+                                        :value="dept.id"
+                                ></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="班级">
+                            <el-input v-model="editStudentForm.class_id"></el-input>
+                        </el-form-item>
+                        <el-form-item label="入学时间">
+                            <el-date-picker
+                                    v-model="editStudentForm.start_date"
+                                    type="date"
+                                    placeholder="选择日期"
+                                    style="width: 100%;"
+                            ></el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="生源地">
+                            <el-input tv-model="editStudentForm.region"></el-input>
+                        </el-form-item>
+                        <el-form-item label="学分">
+                            <el-input type="number" v-model="editStudentForm.credit_hours"></el-input>
+                        </el-form-item>
+                    </el-form>
+                    <template #footer>
+                        <el-button @click="handleEditStudentCancel">取消</el-button>
+                        <el-button type="primary" @click="submitEditStudent">提交</el-button>
+                    </template>
+                </el-dialog>
+
+            </div>
+
+            <!-- 教师管理 -->
+            <div v-show="activeTab === 'teachers'" class="tab-content">
+                <div class="teacher-management">
+                    <h2><i class="fas fa-chalkboard-teacher"></i> 教师管理</h2>
+
+                    <!-- 搜索和操作栏 -->
+                    <div class="toolbar" style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                        <div class="search-box" style="display: flex; align-items: center;">
+                            <el-input
+                                    v-model="teacherSearch.keyword"
+                                    placeholder="请输入姓名"
+                                    prefix-icon="el-icon-search"
+                                    @keyup.enter.native="searchTeachers"
+                                    clearable
+                                    style="width: 300px;"
+                            ></el-input>
+                            <el-button type="primary" @click="searchTeachers" style="margin-left: 10px;">
+                                <i class="fas fa-search"></i> 搜索
+                            </el-button>
+                        </div>
+
+                        <div class="action-buttons">
+                            <el-button type="primary" @click="showAddTeacherDialog"><i class="fas fa-plus"></i> 添加教师</el-button>
+                            <el-button type="success" @click="importTeachers"><i class="fas fa-upload"></i> 批量导入</el-button>
+                            <el-button type="info" @click="exportTeachers"><i class="fas fa-download"></i> 导出数据</el-button>
+                        </div>
+                    </div>
+
+                    <!-- 教师列表表格 -->
+                    <div class="table-container">
+                        <el-table
+                                :data="teachers"
+                                v-loading="loading"
+                                stripe
+                                border
+                                style="width: 100%"
+                                @selection-change="handleTeacherSelectionChange"
+                        >
+                            <!-- 多选列 -->
+                            <el-table-column type="selection" width="55"></el-table-column>
+                            <!-- 教师工号 -->
+                            <el-table-column prop="tno" label="教师工号" width="140" sortable></el-table-column>
+                            <!-- 姓名 -->
+                            <el-table-column prop="tname" label="姓名" width="140"></el-table-column>
+                            <!-- 性别 -->
+                            <el-table-column prop="sex" label="性别" width="140">
+                                <template slot-scope="scope">
+                                    <el-tag :type="scope.row.sex === '男' ? 'primary' : 'success'" size="mini">
+                                        {{ scope.row.sex }}
+                                    </el-tag>
+                                </template>
+                            </el-table-column>
+                            <!-- 年龄 -->
+                            <el-table-column prop="age" label="年龄" width="140"></el-table-column>
+                            <!-- 职称 -->
+                            <el-table-column prop="title" label="职称" width="140"></el-table-column>
+                            <!-- 手机号 -->
+                            <el-table-column prop="phone" label="手机号" width="160"></el-table-column>
+                            <!-- 操作列 -->
+                            <el-table-column label="操作" width="200" fixed="right">
+                                <template slot-scope="scope">
+                                    <el-button size="mini" @click="viewTeacher(scope.row)">
+                                        <i class="fas fa-eye"></i>
+                                    </el-button>
+                                    <el-button size="mini" type="primary" @click="editTeacher(scope.row)">
+                                        <i class="fas fa-edit"></i>
+                                    </el-button>
+                                    <el-button size="mini" type="danger" @click="deleteTeacher(scope.row)">
+                                        <i class="fas fa-trash"></i>
+                                    </el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+
+                        <!-- 分页 -->
+                        <div class="pagination" style="text-align: right; margin-top: 16px;">
+                            <el-pagination
+                                    @size-change="handleSizeChange"
+                                    @current-change="handleCurrentChange"
+                                    :current-page="pagination.currentPage"
+                                    :page-sizes="[10, 20, 50, 100]"
+                                    :page-size="pagination.pageSize"
+                                    layout="total, sizes, prev, pager, next, jumper"
+                                    :total="pagination.total"
+                            ></el-pagination>
+                        </div>
+                    </div>
+
+                    <!-- 添加教师 对话框 -->
+                    <el-dialog
+                            title="添加教师"
+                            :visible.sync="addTeacherDialog.visible"
+                            width="500px"
+                            :before-close="handleAddTeacherCancel"
+                    >
+                        <el-form
+                                :model="addTeacherForm"
+                                :rules="addTeacherRules"
+                                ref="addTeacherFormRef"
+                                label-width="80px"
+                        >
+                            <el-form-item label="工号" prop="tno">
+                                <el-input v-model="addTeacherForm.tno"></el-input>
+                            </el-form-item>
+                            <el-form-item label="姓名" prop="tname">
+                                <el-input v-model="addTeacherForm.tname"></el-input>
+                            </el-form-item>
+                            <el-form-item label="性别" prop="sex">
+                                <el-select v-model="addTeacherForm.sex" placeholder="选择性别">
+                                    <el-option label="男" value="男"></el-option>
+                                    <el-option label="女" value="女"></el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="年龄" prop="age">
+                                <el-input-number v-model="addTeacherForm.age" :min="18" :max="100" style="width: 100%;"></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="职称" prop="title">
+                                <el-input v-model="addTeacherForm.title"></el-input>
+                            </el-form-item>
+                            <el-form-item label="手机号" prop="phone">
+                                <el-input v-model="addTeacherForm.phone"></el-input>
+                            </el-form-item>
+                        </el-form>
+
+                        <template #footer>
+                            <el-button @click="handleAddTeacherCancel">取消</el-button>
+                            <el-button type="primary" @click="submitAddTeacher">提交</el-button>
+                        </template>
+                    </el-dialog>
+                    <!-- 教师批量导入对话框 -->
+                    <el-dialog
+                            title="批量导入教师"
+                            :visible.sync="importTeacherDialogVisible"
+                            width="400px"
+                    >
+                        <el-upload
+                                class="upload-demo"
+                                drag
+                                action=""
+                                :auto-upload="false"
+                                :file-list="teacherFileList"
+                                :on-change="handleTeacherFileChange"
+                        >
+                            <i class="el-icon-upload"></i>
+                            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                            <div class="el-upload__tip" slot="tip">支持 .xlsx 文件</div>
+                        </el-upload>
+                        <span slot="footer" class="dialog-footer">
+                            <el-button @click="importTeacherDialogVisible = false">取消</el-button>
+                                <el-button type="primary" @click="submitImportTeachers">上传并导入</el-button>
+                            </span>
+                    </el-dialog>
+                    <!-- 编辑教师 对话框 -->
+                    <el-dialog
+                            title="编辑教师"
+                            :visible.sync="editTeacherDialog.visible"
+                            width="500px"
+                            :before-close="handleEditTeacherCancel"
+                    >
+                        <el-form :model="editTeacherForm" label-width="80px">
+                            <el-form-item label="工号">
+                                <el-input v-model="editTeacherForm.tno" disabled></el-input> <!-- 学号不可改 -->
+                            </el-form-item>
+                            <el-form-item label="姓名">
+                                <el-input v-model="editTeacherForm.tname"></el-input>
+                            </el-form-item>
+                            <el-form-item label="性别">
+                                <el-select v-model="editTeacherForm.sex" placeholder="选择性别">
+                                    <el-option label="男" value="男"></el-option>
+                                    <el-option label="女" value="女"></el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="年龄">
+                                <el-input type="number" v-model="editTeacherForm.age"></el-input>
+                            </el-form-item>
+                            <el-form-item label="职称">
+                                <el-select v-model="editTeacherForm.title" placeholder="选择职称">
+                                    <el-option label="教授" value="教授"></el-option>
+                                    <el-option label="副教授" value="副教授"></el-option>
+                                    <el-option label="讲师" value="讲师"></el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="电话">
+                                <el-input v-model="editTeacherForm.phone"></el-input>
+                            </el-form-item>
+                        </el-form>
+                        <template #footer>
+                            <el-button @click="handleEditTeacherCancel">取消</el-button>
+                            <el-button type="primary" @click="submitEditTeacher">提交</el-button>
+                        </template>
+                    </el-dialog>
+                    <!-- 教师详情对话框 -->
+                    <el-dialog
+                            title="教师详情"
+                            :visible.sync="teacherDetailDialog.visible"
+                            @close="closeTeacherDetailDialog"
+                            width="60%"
+                            :before-close="closeTeacherDetailDialog">
+                        <div v-if="teacherDetailDialog.teacher" class="teacher-detail">
+                            <div class="detail-header">
+                                <div class="avatar">
+                                    <img
+                                            :src="teacherDetailDialog.teacher.avatar || '../images/default-avatar.png'"
+                                            :alt="teacherDetailDialog.teacher.tname">
+                                </div>
+                                <div class="basic-info">
+                                    <h3>{{ teacherDetailDialog.teacher.tname }}</h3>
+                                    <p>工号：{{ teacherDetailDialog.teacher.tno }}</p>
+                                    <p>职称：{{ teacherDetailDialog.teacher.title }}</p>
+                                    <p>电话：{{ teacherDetailDialog.teacher.phone }}</p>
+                                </div>
+                            </div>
+
+                            <!--教师基本信息-->
+                            <el-tabs v-model="teacherDetailDialog.activeTab">
+                                <el-tab-pane label="基本信息" name="basic">
+                                    <div class="info-grid">
+                                        <div class="info-item">
+                                            <label>姓名：</label>
+                                            <span>{{ teacherDetailDialog.teacher.tname }}</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>性别：</label>
+                                            <span>{{ teacherDetailDialog.teacher.sex }}</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>年龄：</label>
+                                            <span>{{ teacherDetailDialog.teacher.age }}</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>职称：</label>
+                                            <span>{{ teacherDetailDialog.teacher.title }}</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>联系电话：</label>
+                                            <span>{{ teacherDetailDialog.teacher.phone }}</span>
+                                        </div>
+                                    </div>
+                                </el-tab-pane>
+
+                                <el-tab-pane label="所授课程" name="courses">
+                                    <div v-if="teacherCourses.length === 0" class="info-grid">
+                                        <div class="info-item">
+                                            <span style="color: #999;">暂无授课课程</span>
+                                        </div>
+                                    </div>
+                                    <div v-else>
+                                        <div
+                                                class="info-grid"
+                                                v-for="(course, index) in teacherCourses"
+                                                :key="index"
+                                                style="margin-bottom: 20px; border-bottom: 1px solid #eaeaea; padding-bottom: 10px;">
+                                            <div class="info-item">
+                                                <label>课程编号：</label>
+                                                <span>{{ course.course_id }}</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <label>课程名称：</label>
+                                                <span>{{ course.course_name }}</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <label>班级：</label>
+                                                <span>{{ course.class_name }}</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <label>学期：</label>
+                                                <span>{{ course.term }}</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <label>学分：</label>
+                                                <span>{{ course.credit_hour }}</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <label>课时：</label>
+                                                <span>{{ course.total_hours }}</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <label>考核方式：</label>
+                                                <span>{{ course.assess_type }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </el-tab-pane>
+                            </el-tabs>
+                        </div>
+
+                        <span slot="footer" class="dialog-footer">
+                            <el-button @click="closeTeacherDetailDialog">关闭</el-button>
+                            <el-button type="primary" @click="editTeacher(teacherDetailDialog.teacher)">编辑</el-button>
+                        </span>
+                    </el-dialog>
+                </div>
+            </div>
+
+            <!-- 课程管理 -->
+            <div v-show="activeTab === 'courses'" class="tab-content">
+                <div class="course-management">
+                    <h2><i class="fas fa-chalkboard-course"></i> 课程管理</h2>
+                        <!-- 搜索和操作栏 -->
+                        <div class="toolbar" style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                            <div class="search-box" style="display: flex; align-items: center;">
+                                <el-input
+                                        v-model="courseSearch.keyword"
+                                        placeholder="请输入课程"
+                                        prefix-icon="el-icon-search"
+                                        @keyup.enter.native="searchCourses"
+                                        clearable
+                                        style="width: 300px;"
+                                ></el-input>
+                                <el-button type="primary" @click="searchCourses" style="margin-left: 10px;">
+                                    <i class="fas fa-search"></i> 搜索
+                                </el-button>
+                            </div>
+
+                            <div class="action-buttons">
+                                <el-button type="primary" @click="showAddCourseDialog"><i class="fas fa-plus"></i> 添加课程</el-button>
+                                <el-button type="success" @click="importCourses"><i class="fas fa-upload"></i> 批量导入</el-button>
+                                <el-button type="info" @click="exportCourses"><i class="fas fa-download"></i> 导出数据</el-button>
+                            </div>
+                        </div>
+                        <!-- 课程列表表格 -->
+                        <div class="table-container">
+                            <el-table
+                                    :data="courses"
+                                    v-loading="loading"
+                                    stripe
+                                    border
+                                    style="width: 100%"
+                                    @selection-change="handleCourseSelectionChange"
+                            >
+                                <!-- 多选列 -->
+                                <el-table-column type="selection" width="55"></el-table-column>
+                                <el-table-column prop="cno" label="课程号" width="200" sortable></el-table-column>
+                                <el-table-column prop="cname" label="课程名" width="200"></el-table-column>
+                                <el-table-column prop="credit_hour" label="学分" width="150"></el-table-column>
+                                <el-table-column prop="hour" label="学时" width="150"></el-table-column>
+                                <el-table-column prop="assess_type" label="课程类型" width="200"></el-table-column>
+                                <!-- 操作列 -->
+                                <el-table-column label="操作" width="200" fixed="right">
+                                    <template slot-scope="scope">
+                                        <el-button size="mini" @click="viewCourse(scope.row)">
+                                            <i class="fas fa-eye"></i>
+                                        </el-button>
+                                        <el-button size="mini" type="primary" @click="editCourse(scope.row)">
+                                            <i class="fas fa-edit"></i>
+                                        </el-button>
+                                        <el-button size="mini" type="danger" @click="deleteCourse(scope.row)">
+                                            <i class="fas fa-trash"></i>
+                                        </el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+
+                            <!-- 分页 -->
+                            <div class="pagination" style="text-align: right; margin-top: 16px;">
+                                <el-pagination
+                                        @size-change="handleSizeChange"
+                                        @current-change="handleCurrentChange"
+                                        :current-page="pagination.currentPage"
+                                        :page-sizes="[10, 20, 50, 100]"
+                                        :page-size="pagination.pageSize"
+                                        layout="total, sizes, prev, pager, next, jumper"
+                                        :total="pagination.total"
+                                ></el-pagination>
+                            </div>
+                        </div>
+
+                        <!-- 添加课程 对话框 -->
+                        <el-dialog
+                            title="添加课程"
+                            :visible.sync="addCourseDialog.visible"
+                            width="500px"
+                            :before-close="handleAddCourseCancel"
+                        >
+                            <el-form
+                                    :model="addCourseForm"
+                                    :rules="addCourseRules"
+                                    ref="addTeacherFormRef"
+                                    label-width="80px"
+                            >
+                                <el-form-item label="课程号" prop="cno">
+                                    <el-input v-model="addCourseForm.cno"></el-input>
+                                </el-form-item>
+                                <el-form-item label="课程名" prop="cname">
+                                    <el-input v-model="addCourseForm.cname"></el-input>
+                                </el-form-item>
+                                <el-form-item label="学分" prop="credit_hour">
+                                    <el-input v-model="addCourseForm.credit_hour"></el-input>
+                                </el-form-item>
+                                <el-form-item label="学时" prop="hour">
+                                    <el-input v-model="addCourseForm.hour"></el-input>
+                                </el-form-item>
+                                <el-form-item label="类型" prop="assess_type">
+                                    <el-select v-model="addCourseForm.assess_type" placeholder="请选择课程类型" clearable>
+                                        <el-option label="考察课" value="考察"></el-option>
+                                        <el-option label="考试课" value="考试"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-form>
+
+                            <template #footer>
+                                <el-button @click="handleAddCourseCancel">取消</el-button>
+                                <el-button type="primary" @click="submitAddCourse">提交</el-button>
+                            </template>
+                        </el-dialog>
+                        <!-- 课程批量导入对话框 -->
+                        <el-dialog
+                            title="批量课程"
+                            :visible.sync="importCourseDialogVisible"
+                            width="400px"
+                        >
+                            <el-upload
+                                    class="upload-demo"
+                                    drag
+                                    action=""
+                                    :auto-upload="false"
+                                    :file-list="courserFileList"
+                                    :on-change="handleCourseFileChange"
+                            >
+                                <i class="el-icon-upload"></i>
+                                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                                <div class="el-upload__tip" slot="tip">支持 .xlsx 文件</div>
+                            </el-upload>
+                            <span slot="footer" class="dialog-footer">
+                            <el-button @click="importCourseDialogVisible = false">取消</el-button>
+                                <el-button type="primary" @click="submitImportCourses">上传并导入</el-button>
+                            </span>
+                        </el-dialog>
+                        <!-- 课程详情对话框 -->
+                        <el-dialog
+                            title="课程详情"
+                            :visible.sync="courseDetailDialog.visible"
+                            @close="closeCourseDetailDialog"
+                            width="60%"
+                            :before-close="closeCourseDetailDialog"
+                        >
+                            <div v-if="courseDetailDialog.course" class="course-detail">
+                                <div class="detail-header">
+                                    <div class="basic-info">
+                                        <h3>{{ courseDetailDialog.course.cname }}</h3>
+                                        <p>课程编号：{{ courseDetailDialog.course.cno }}</p>
+                                        <p>学分：{{ courseDetailDialog.course.credit_hour }}</p>
+                                        <p>课时：{{ courseDetailDialog.course.hour }}</p>
+                                        <p>考核方式：{{ courseDetailDialog.course.assess_type }}</p>
+                                    </div>
+                                </div>
+
+                                <el-tabs v-model="courseDetailDialog.activeTab">
+                                    <!-- 基本信息 -->
+                                    <el-tab-pane label="基本信息" name="basic">
+                                        <div class="info-grid">
+                                            <div class="info-item">
+                                                <label>课程编号：</label>
+                                                <span>{{ courseDetailDialog.course.cno }}</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <label>课程名称：</label>
+                                                <span>{{ courseDetailDialog.course.cname }}</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <label>学分：</label>
+                                                <span>{{ courseDetailDialog.course.credit_hour }}</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <label>课时：</label>
+                                                <span>{{ courseDetailDialog.course.hour }}</span>
+                                            </div>
+                                            <div class="info-item">
+                                                <label>考核方式：</label>
+                                                <span>{{ courseDetailDialog.course.assess_type }}</span>
+                                            </div>
+                                        </div>
+                                    </el-tab-pane>
+
+                                    <!-- 教学班级及授课老师 -->
+                                    <el-tab-pane label="教学班级" name="classes">
+                                        <div v-if="courseTeachingClasses.length === 0" class="info-grid">
+                                            <div class="info-item">
+                                                <span style="color: #999;">暂无教学班级信息</span>
+                                            </div>
+                                        </div>
+                                        <div v-else>
+                                            <div
+                                                    class="info-grid"
+                                                    v-for="(item, index) in courseTeachingClasses"
+                                                    :key="index"
+                                                    style="margin-bottom: 20px; border-bottom: 1px solid #eaeaea; padding-bottom: 10px;"
+                                            >
+                                                <div class="info-item">
+                                                    <label>班级名称：</label>
+                                                    <span>{{ item.class_name }}</span>
+                                                </div>
+                                                <div class="info-item">
+                                                    <label>授课教师：</label>
+                                                    <span>{{ item.teacher_name }}</span>
+                                                </div>
+                                                <div class="info-item">
+                                                    <label>教师工号：</label>
+                                                    <span>{{ item.teacher_tno }}</span>
+                                                </div>
+                                                <div class="info-item">
+                                                    <label>学期：</label>
+                                                    <span>{{ item.term }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </el-tab-pane>
+                                    <!-- 平均成绩 -->
+                                    <el-tab-pane label="成绩统计" name="grades">
+                                        <div v-if="courseAvgGrades.length === 0" class="info-grid">
+                                            <div class="info-item">
+                                                <span style="color: #999;">暂无成绩数据</span>
+                                            </div>
+                                        </div>
+                                        <div v-else>
+                                            <div
+                                                    class="info-grid"
+                                                    v-for="(item, index) in courseAvgGrades"
+                                                    :key="index"
+                                                    style="margin-bottom: 20px; border-bottom: 1px solid #eaeaea; padding-bottom: 10px;"
+                                            >
+                                                <div class="info-item">
+                                                    <label>学期：</label>
+                                                    <span>{{ item.term }}</span>
+                                                </div>
+                                                <div class="info-item">
+                                                    <label>平均分：</label>
+                                                    <span>{{ item.avg_grade }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </el-tab-pane>
+                                </el-tabs>
+                            </div>
+
+                            <span slot="footer" class="dialog-footer">
+                                <el-button @click="closeCourseDetailDialog">关闭</el-button>
+                                <el-button type="primary" @click="editCourse(courseDetailDialog.course)">编辑</el-button>
+                            </span>
+                        </el-dialog>
+                        <!-- 编辑课程 对话框 -->
+                        <el-dialog
+                                title="编辑课程"
+                                :visible.sync="editCourseDialog.visible"
+                                width="500px"
+                                :before-close="handleEditCourseCancel"
+                        >
+                            <el-form :model="editCourseForm" label-width="100px">
+                                <el-form-item label="课程编号">
+                                    <el-input v-model="editCourseForm.cno" disabled></el-input> <!-- 编号不可改 -->
+                                </el-form-item>
+
+                                <el-form-item label="课程名称">
+                                    <el-input v-model="editCourseForm.cname"></el-input>
+                                </el-form-item>
+
+                                <el-form-item label="学分">
+                                    <el-input type="number" v-model="editCourseForm.credit_hour"></el-input>
+                                </el-form-item>
+
+                                <el-form-item label="课时">
+                                    <el-input type="number" v-model="editCourseForm.total_hours"></el-input>
+                                </el-form-item>
+
+                                <el-form-item label="考核方式">
+                                    <el-select v-model="editCourseForm.assess_type" placeholder="选择考核方式">
+                                        <el-option label="考试" value="考试"></el-option>
+                                        <el-option label="考查" value="考查"></el-option>
+                                        <el-option label="其他" value="其他"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-form>
+
+                            <template #footer>
+                                <el-button @click="handleEditCourseCancel">取消</el-button>
+                                <el-button type="primary" @click="submitEditCourse">提交</el-button>
+                            </template>
+                        </el-dialog>
+                    </h2>
+                </div>
+            </div>
+
+            <!-- 专业管理 -->
+            <div v-show="activeTab === 'departments'" class="tab-content">
+                <div class="department-management">
+                    <h2><i class="fas fa-building"></i> 专业管理</h2>
+                        <!-- 搜索和操作栏 -->
+                        <div class="toolbar" style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                            <div class="search-box" style="display: flex; align-items: center;">
+                                <el-input
+                                        v-model="deptSearch.keyword"
+                                        placeholder="请输入专业"
+                                        prefix-icon="el-icon-search"
+                                        @keyup.enter.native="searchDept"
+                                        clearable
+                                        style="width: 300px;"
+                                ></el-input>
+                                <el-button type="primary" @click="searchDept" style="margin-left: 10px;">
+                                    <i class="fas fa-search"></i> 搜索
+                                </el-button>
+                            </div>
+
+                            <div class="action-buttons">
+                                <el-button type="primary" @click="showAddDeptDialog"><i class="fas fa-plus"></i> 添加专业</el-button>
+                                </div>
+                        </div>
+                        <!-- 专业列表表格 -->
+                        <div class="table-container">
+                            <el-table
+                                    :data="departments"
+                                    v-loading="loading"
+                                    stripe
+                                    border
+                                    style="width: 100%"
+                                    @selection-change="handleDeptSelectionChange"
+                            >
+                                <!-- 多选列 -->
+                                <el-table-column type="selection" width="55"></el-table-column>
+                                <el-table-column prop="dept_no" label="专业号" width="400" sortable></el-table-column>
+                                <el-table-column prop="dept_name" label="专业名" width="400"></el-table-column>
+                                <!-- 操作列 -->
+                                <el-table-column label="操作" width="200" fixed="right">
+                                    <template slot-scope="scope">
+                                        <el-button size="mini" @click="viewDept(scope.row)">
+                                            <i class="fas fa-eye"></i>
+                                        </el-button>
+                                        <el-button size="mini" type="primary" @click="editDept(scope.row)">
+                                            <i class="fas fa-edit"></i>
+                                        </el-button>
+                                        <el-button size="mini" type="danger" @click="deleteDept(scope.row)">
+                                            <i class="fas fa-trash"></i>
+                                        </el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+
+                            <!-- 分页 -->
+                            <div class="pagination" style="text-align: right; margin-top: 16px;">
+                                <el-pagination
+                                        @size-change="handleSizeChange"
+                                        @current-change="handleCurrentChange"
+                                        :current-page="pagination.currentPage"
+                                        :page-sizes="[10, 20, 50, 100]"
+                                        :page-size="pagination.pageSize"
+                                        layout="total, sizes, prev, pager, next, jumper"
+                                        :total="pagination.total"
+                                ></el-pagination>
+                            </div>
+                        </div>
+                </div>
+                <!-- 添加专业 对话框 -->
+                <el-dialog
+                        title="添加专业"
+                        :visible.sync="addDeptDialog.visible"
+                        width="500px"
+                        :before-close="handleAddDeptCancel"
+                >
+                    <el-form
+                            :model="addDeptForm"
+                            :rules="addDeptRules"
+                            ref="addDeptFormRef"
+                            label-width="80px"
+                    >
+                        <el-form-item label="专业号" prop="dept_no">
+                            <el-input v-model="addDeptForm.dept_no"></el-input>
+                        </el-form-item>
+                        <el-form-item label="专业名" prop="dept_name">
+                            <el-input v-model="addDeptForm.dept_name"></el-input>
+                        </el-form-item>
+                    </el-form>
+
+                    <template #footer>
+                        <el-button @click="handleAddDeptCancel">取消</el-button>
+                        <el-button type="primary" @click="submitAddDept">提交</el-button>
+                    </template>
+                </el-dialog>
+                <!-- 编辑专业 对话框 -->
+                <el-dialog
+                        title="编辑专业"
+                        :visible.sync="editDeptDialog.visible"
+                        width="500px"
+                        :before-close="handleEditDeptCancel"
+                >
+                    <el-form :model="editDeptForm" label-width="80px">
+                        <el-form-item label="专业号">
+                            <el-input v-model="editDeptForm.dept_no" disabled></el-input> <!-- 专业号不可修改 -->
+                        </el-form-item>
+                        <el-form-item label="专业名">
+                            <el-input v-model="editDeptForm.dept_name"></el-input>
+                        </el-form-item>
+                    </el-form>
+                    <template #footer>
+                        <el-button @click="handleEditDeptCancel">取消</el-button>
+                        <el-button type="primary" @click="submitEditDept">提交</el-button>
+                    </template>
+                </el-dialog>
+                <!-- 专业详情对话框 -->
+                <el-dialog
+                        title="专业详情"
+                        :visible.sync="deptDetailDialog.visible"
+                        @close="closeDeptDetailDialog"
+                        width="60%"
+                        :before-close="closeDeptDetailDialog"
+                >
+                    <div v-if="deptDetailDialog.department" class="dept-detail">
+                        <div class="detail-header">
+                            <div class="basic-info">
+                                <h3>{{ deptDetailDialog.department.dept_name }}</h3>
+                                <p>专业编号：{{ deptDetailDialog.department.dept_no }}</p>
+                            </div>
+                        </div>
+
+                        <el-tabs v-model="deptDetailDialog.activeTab">
+                            <!-- 基本信息 -->
+                            <el-tab-pane label="基本信息" name="basic">
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <label>专业编号：</label>
+                                        <span>{{ deptDetailDialog.department.dept_no }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <label>专业名称：</label>
+                                        <span>{{ deptDetailDialog.department.dept_name }}</span>
+                                    </div>
+                                </div>
+                            </el-tab-pane>
+
+                            <!-- 所属班级 -->
+                            <el-tab-pane label="所属班级" name="classes">
+                                <div v-if="deptClasses.length === 0" class="info-grid">
+                                    <div class="info-item">
+                                        <span style="color: #999;">暂无班级信息</span>
+                                    </div>
+                                </div>
+                                <div v-else>
+                                    <div
+                                            class="info-grid"
+                                            v-for="(cls, index) in deptClasses"
+                                            :key="index"
+                                            style="margin-bottom: 20px; border-bottom: 1px solid #eaeaea; padding-bottom: 10px;"
+                                    >
+                                        <div class="info-item">
+                                            <label>班级编号：</label>
+                                            <span>{{ cls.class_id }}</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <label>班级名称：</label>
+                                            <span>{{ cls.class_name }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </el-tab-pane>
+                        </el-tabs>
+                    </div>
+
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="closeDeptDetailDialog">关闭</el-button>
+                        <el-button type="primary" @click="editDept(deptDetailDialog.department)">编辑</el-button>
+                    </span>
+                </el-dialog>
+            </div>
+
+            <!-- 成绩管理 -->
+            <div v-show="activeTab === 'grades'" class="tab-content">
+                <div class="grade-management">
+                    <h2><i class="fas fa-chart-line"></i> 成绩管理</h2>
+                    <!-- 搜索和操作栏 -->
+                        <div class="toolbar" style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                            <div class="search-box" style="display: flex; align-items: center; width: 800px;">
+                                <el-input
+                                        v-model="gradeSearch.keyword"
+                                        placeholder="请输入学生名"
+                                        prefix-icon="el-icon-search"
+                                        @keyup.enter.native="searchGrades"
+                                        clearable
+                                        style="width: 150px;"
+                                ></el-input>
+                                <el-select
+                                        v-model="studentSearch.grade"
+                                        placeholder="选择学年"
+                                        clearable
+                                        @change="searchGrades"
+                                        style="min-width: 50px; margin-left: 10px;"
+                                >
+                                    <el-option label="2024-2025学年" value="2024-2025"></el-option>
+                                    <el-option label="2023-2024学年" value="2023-2024"></el-option>
+                                    <el-option label="2022-2023学年" value="2022-2023"></el-option>
+                                    <el-option label="2021-2022学年" value="2021-2022"></el-option>
+                                </el-select>
+
+                                <el-button
+                                        type="primary"
+                                        @click="searchGrades"
+                                        style="margin-left: 100px;"
+                                >
+                                    <i class="fas fa-search"></i> 搜索
+                                </el-button>
+                            </div>
+                            <div class="action-buttons">
+                                <el-button type="primary" @click="showAddGradeDialog"><i class="fas fa-plus"></i> 成绩录入 </el-button>
+                                <el-button type="info" @click="exportGrades"><i class="fas fa-download"></i> 成绩导出 </el-button>
+                            </div>
+                        </div>
+                     <!-- 成绩列表表格 -->
+                        <div class="table-container">
+                            <el-table
+                                     :data="grades"
+                                     v-loading="loading"
+                                     stripe
+                                     border
+                                     style="width: 100%"
+                                     @sort-change="handleSortChange"
+                                     @selection-change="handleGradeSelectionChange"
+                            >
+                                <!-- 多选列 -->
+                                <el-table-column type="selection" width="55"></el-table-column>
+                                 <el-table-column prop="dept_no" label="专业号" width="150" sortable="custom"></el-table-column>
+                                <el-table-column prop="dept_name" label="专业名" width="150"></el-table-column>
+                                <el-table-column prop="sno" label="学号" width="150" sortable="custom"></el-table-column>
+                                <el-table-column prop="sname" label="姓名" width="150"></el-table-column>
+                                <el-table-column prop="year" label="学年" width="150"></el-table-column>
+                                <el-table-column prop="year_grade" label="成绩" width="150" sortable="custom"></el-table-column>
+                                <!-- 操作列 -->
+                                <el-table-column label="操作" width="200" fixed="right">
+                                    <template slot-scope="scope">
+                                        <el-button size="mini" @click="viewGrade(scope.row)">
+                                            <i class="fas fa-eye"></i>
+                                        </el-button>
+                                        <el-button size="mini" type="primary" @click="editGrade(scope.row)">
+                                            <i class="fas fa-edit"></i>
+                                        </el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+
+                            <!-- 分页 -->
+                            <div class="pagination" style="text-align: right; margin-top: 16px;">
+                                <el-pagination
+                                        @size-change="handleSizeChange"
+                                        @current-change="handleCurrentChange"
+                                        :current-page="pagination.currentPage"
+                                        :page-sizes="[10, 20, 50, 100]"
+                                        :page-size="pagination.pageSize"
+                                        layout="total, sizes, prev, pager, next, jumper"
+                                        :total="pagination.total"
+                                ></el-pagination>
+                            </div>
+                        </div>
+                </div>
+                <!-- 添加成绩 对话框 -->
+               <el-dialog
+                       title="添加成绩"
+                       :visible.sync="addGradeDialog.visible"
+                       width="500px"
+                       :before-close="handleAddGradeCancel"
+               >
+                   <el-form
+                           :model="addGradeForm"
+                           :rules="addGradeRules"
+                           ref="addGradeFormRef"
+                           label-width="80px"
+                   >
+                       <el-form-item label="课程名" prop="cname">
+                           <el-input v-model="addGradeForm.cname" @blur="fetchCredits"></el-input>
+                       </el-form-item>
+                       <el-form-item label="学生名" prop="sname">
+                           <el-input v-model="addGradeForm.sname" @blur="fetchCredits"></el-input>
+                       </el-form-item>
+                       <el-form-item label="成绩" prop="grade">
+                           <el-input v-model="addGradeForm.grade"></el-input>
+                       </el-form-item>
+                       <el-form-item label="已修学分">
+                           <el-input :value="earnedCredits" disabled></el-input>
+                       </el-form-item>
+                   </el-form>
+
+                   <template #footer>
+                       <el-button @click="handleAddGradeCancel">取消</el-button>
+                       <el-button type="primary" @click="submitAddGrade">提交</el-button>
+                   </template>
+               </el-dialog>
+                 <!-- 成绩详情对话框 -->
+                <el-dialog
+                        title="成绩详情"
+                        :visible.sync="gradeDetailDialog.visible"
+                        @close="closeGradeDetailDialog"
+                        width="60%"
+                        :before-close="closeGradeDetailDialog"
+                >
+                    <div v-if="gradeDetailDialog.student" class="grade-detail">
+                        <div class="detail-header">
+                            <div class="avatar">
+                                <img :src="gradeDetailDialog.student.avatar || '../images/default-avatar.png'" :alt="gradeDetailDialog.student.sname">
+                            </div>
+                            <div class="basic-info">
+                                <h3>{{ gradeDetailDialog.student.sname }}</h3>
+                                <p>学号：{{ gradeDetailDialog.student.sno }}</p>
+                                <p>专业：{{ gradeDetailDialog.student.dept_name }}</p>
+                                <p>班级：{{ gradeDetailDialog.student.class_id }}</p>
+                            </div>
+                        </div>
+
+                        <el-tabs v-model="gradeDetailDialog.activeTab">
+                            <!-- 基本信息 -->
+                            <el-tab-pane label="基本信息" name="basic">
+                                <div class="info-grid">
+                                    <div class="info-item"><label>姓名：</label><span>{{ gradeDetailDialog.student.sname }}</span></div>
+                                    <div class="info-item"><label>性别：</label><span>{{ gradeDetailDialog.student.sex }}</span></div>
+                                    <div class="info-item"><label>年龄：</label><span>{{ gradeDetailDialog.student.age }}</span></div>
+                                    <div class="info-item"><label>籍贯：</label><span>{{ gradeDetailDialog.student.region_name }}</span></div>
+                                </div>
+                            </el-tab-pane>
+
+                            <!-- 成绩记录 -->
+                            <el-tab-pane label="成绩记录" name="grades">
+                                <div v-if="gradeDetailDialog.grades.length === 0" class="info-grid">
+                                    <div class="info-item">
+                                        <span style="color: #999;">暂无成绩记录</span>
+                                    </div>
+                                </div>
+                                <div v-else>
+                                    <div
+                                            class="info-grid"
+                                            v-for="(grade, index) in gradeDetailDialog.grades"
+                                            :key="index"
+                                            style="margin-bottom: 20px; border-bottom: 1px solid #eaeaea; padding-bottom: 10px;"
+                                    >
+                                        <div class="info-item"><label>课程编号：</label><span>{{ grade.course_id }}</span></div>
+                                        <div class="info-item"><label>课程名称：</label><span>{{ grade.course_name }}</span></div>
+                                        <div class="info-item"><label>教师：</label><span>{{ grade.teacher_name }}</span></div>
+                                        <div class="info-item"><label>学期：</label><span>{{ grade.term }}</span></div>
+                                        <div class="info-item"><label>成绩：</label><span>{{ grade.grade }}</span></div>
+                                    </div>
+                                </div>
+                            </el-tab-pane>
+
+                            <!-- 已修学分 -->
+                            <el-tab-pane label="学分统计" name="credits">
+                                <div class="info-grid">
+                                    <div class="info-item"><label>已修学分：</label><span>{{ gradeDetailDialog.student.credit_hours }}</span></div>
+                                </div>
+                            </el-tab-pane>
+                        </el-tabs>
+                    </div>
+
+                    <span slot="footer" class="dialog-footer">
+                            <el-button @click="closeGradeDetailDialog">关闭</el-button>
+                    </span>
+                </el-dialog>
+                <!-- 编辑成绩 对话框 -->
+                <el-dialog
+                        title="编辑成绩"
+                        :visible.sync="editGradeDialog.visible"
+                        width="500px"
+                        :before-close="handleEditGradeCancel"
+                >
+                    <el-form :model="editGradeForm" label-width="80px">
+                        <el-form-item label="学生名">
+                            <el-input v-model="editGradeForm.sname" disabled></el-input>
+                        </el-form-item>
+                        <el-form-item label="课程名">
+                            <el-select
+                                    v-model="editGradeForm.teaching_id"
+                                    placeholder="请选择课程"
+                            >
+                            <el-option
+                                    v-for="course in selectedCourses"
+                                    :key="course.teaching_id"
+                                    :label="`${course.course_name} (${course.term})`"
+                                    :value="course.teaching_id"
+                            />
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="成绩">
+                            <el-input v-model.number="editGradeForm.grade" type="number"></el-input>
+                        </el-form-item>
+                    </el-form>
+                    <template #footer>
+                        <el-button @click="handleEditGradeCancel">取消</el-button>
+                        <el-button type="primary" @click="submitEditGrade">提交</el-button>
+                    </template>
+                </el-dialog>
+
+
+            </div>
+
+            <!-- 自然语言问题 -->
+            <div v-show="activeTab === 'qa'" class="tab-content">
+                <div class="report-management">
+                    <h2><i class="fas fa-file-alt"></i> 系统问答</h2>
+                    <p>该系统支持自然语言问答...</p>
+
+                    <el-form @submit.native.prevent="handleSubmit" label-width="80px" style="max-width:600px;">
+                        <el-form-item label="问题">
+                            <el-input
+                                    v-model="question"
+                                    placeholder="请输入你的问题"
+                                    clearable
+                                    @keyup.enter.native="handleSubmit"
+                            />
+                        </el-form-item>
+
+                        <el-form-item>
+                            <el-button type="primary" @click="handleSubmit" :loading="loading">
+                                提交
+                            </el-button>
+                            <el-button @click="clear">清空</el-button>
+                        </el-form-item>
+                    </el-form>
+
+                    <div v-if="answer" class="answer-box" style="margin-top:20px;">
+                        <h3>回答：</h3>
+                        <el-card>
+                            <p style="white-space: pre-wrap;">{{ answer }}</p>
+                        </el-card>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 学生详情对话框 -->
+        <el-dialog
+            title="学生详情"
+            :visible.sync="studentDetailDialog.visible"
+            @close="closeStudentDetailDialog"
+            width="60%"
+            :before-close="closeStudentDetailDialog">
+            <div v-if="studentDetailDialog.student" class="student-detail">
+                <div class="detail-header">
+                    <div class="avatar">
+                        <img :src="studentDetailDialog.student.avatar || '../images/default-avatar.png'" :alt="studentDetailDialog.student.name">
+                    </div>
+                    <div class="basic-info">
+                        <h3>{{ studentDetailDialog.student.name }}</h3>
+                        <p>学号：{{ studentDetailDialog.student.sno }}</p>
+                        <p>专业：{{ studentDetailDialog.student.dept_name }}</p>
+                        <p>班级：{{ studentDetailDialog.student.class_id }}</p>
+                    </div>
+                </div>
+
+                <!--学生基本信息-->
+                <el-tabs v-model="studentDetailDialog.activeTab">
+                    <el-tab-pane label="基本信息" name="basic">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <label>姓名：</label>
+                                <span>{{ studentDetailDialog.student.sname }}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>性别：</label>
+                                <span>{{ studentDetailDialog.student.sex }}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>年龄：</label>
+                                <span>{{ studentDetailDialog.student.age }}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>生源地：</label>
+                                <span>{{ studentDetailDialog.student.region_name }}</span>
+                            </div>
+                        </div>
+                    </el-tab-pane>
+
+                    <el-tab-pane label="学籍信息" name="academic">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <label>学号：</label>
+                                <span>{{ studentDetailDialog.student.sno }}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>院系：</label>
+                                <span>{{ studentDetailDialog.student.dept_name }}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>班级：</label>
+                                <span>{{ studentDetailDialog.student.class_id }}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>入学日期：</label>
+                                <span>{{ studentDetailDialog.student.start_date }}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>已修学分：</label>
+                                <span>{{ studentDetailDialog.student.credit_hours }}</span>
+                            </div>
+                        </div>
+                    </el-tab-pane>
+
+                    <el-tab-pane label="选课记录" name="courses">
+                        <div v-if="courseRecords.length === 0" class="info-grid">
+                            <div class="info-item">
+                                <span style="color: #999;">暂无选课记录</span>
+                            </div>
+                        </div>
+                        <div v-else>
+                            <div
+                                    class="info-grid"
+                                    v-for="(course, index) in courseRecords"
+                                    :key="index"
+                                    style="margin-bottom: 20px; border-bottom: 1px solid #eaeaea; padding-bottom: 10px;"
+                            >
+                                <div class="info-item">
+                                    <label>课程编号：</label>
+                                    <span>{{ course.course_id }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>课程名称：</label>
+                                    <span>{{ course.course_name }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>授课教师：</label>
+                                    <span>{{ course.teacher_name }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>班级：</label>
+                                    <span>{{ course.class_name }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>学期：</label>
+                                    <span>{{ course.term }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>学分：</label>
+                                    <span>{{ course.credit_hour }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </el-tab-pane>
+
+                    <el-tab-pane label="成绩记录" name="grades">
+                        <div v-if="gradeRecords.length === 0" class="info-grid">
+                            <div class="info-item">
+                                <span style="color: #999;">暂无成绩记录</span>
+                            </div>
+                        </div>
+                        <div v-else>
+                            <div
+                                    class="info-grid"
+                                    v-for="(grade, index) in gradeRecords"
+                                    :key="index"
+                                    style="margin-bottom: 20px; border-bottom: 1px solid #eaeaea; padding-bottom: 10px;"
+                            >
+                                <div class="info-item">
+                                    <label>课程编号：</label>
+                                    <span>{{ grade.course_id }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>课程名称：</label>
+                                    <span>{{ grade.course_name }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>授课教师：</label>
+                                    <span>{{ grade.teacher_name }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>班级：</label>
+                                    <span>{{ grade.class_name }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>学期：</label>
+                                    <span>{{ grade.term }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>成绩：</label>
+                                    <span>{{ grade.grade }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </el-tab-pane>
+                </el-tabs>
+
+
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="closeStudentDetailDialog">关闭</el-button>
+                <el-button type="primary" @click="editStudent(studentDetailDialog.student)">编辑</el-button>
+            </span>
+        </el-dialog>
+
+
+
+    </div>
+
+    <!-- 引入Vue.js -->
+    <script src="https://unpkg.com/vue@2/dist/vue.js"></script>
+    <!-- 引入Element UI -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <!-- 引入Axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- 引入ECharts -->
+    <script src="https://unpkg.com/echarts@5/dist/echarts.min.js"></script>
+    <!-- 引入自定义JS -->
+    <script src="../js/app.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/charts.js"></script>
+</body>
+</html>

@@ -1,0 +1,735 @@
+<script>
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+  if (!userInfo || userInfo.role !== 'student') {
+    alert("非法访问，请重新登录！");
+    window.location.href = "login.html";
+  } else {
+    const studentId = userInfo.user_ref_id;  // 这是学号
+    console.log("当前学生学号：", studentId);
+
+    // 你可以用这个 studentId 向后端发起请求，获取学生详情
+    // 示例：
+    // axios.get(`http://localhost:8000/students/${studentId}`).then(...)
+  }
+</script>
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>学生信息管理系统 - 学生端</title>
+    <link
+            rel="stylesheet"
+            href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"
+    />
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+        body {
+            margin: 0;
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+        .header {
+            background: #409eff;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px #409effaa;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .logo i {
+            font-size: 24px;
+        }
+        .nav-menu ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    gap: 20px;
+}
+        .nav-menu ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background-color 0.3s;
+        }
+        .nav-menu ul li a:hover,
+        .nav-menu ul li a.active {
+            background-color: #2e6cd1;
+        }
+        .user-info {
+            cursor: pointer;
+        }
+        .user-avatar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            font-weight: 600;
+        }
+        .user-avatar img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+        .main-content {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px 40px;
+        }
+        .tab-content {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 6px;
+            box-shadow: 0 0 8px rgb(0 0 0 / 0.1);
+        }
+        .dashboard h2 {
+            margin-bottom: 30px;
+            font-weight: 700;
+            font-size: 26px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #409eff;
+        }
+        .dashboard h2 i {
+            font-size: 28px;
+        }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            background: #f0f6ff;
+            padding: 20px;
+            border-radius: 8px;
+            flex: 1 1 200px;
+            display: flex;
+            align-items: center;
+            cursor: default;
+            box-shadow: 0 0 6px rgba(64, 158, 255, 0.2);
+            transition: box-shadow 0.3s ease;
+        }
+        .stat-card:hover {
+            box-shadow: 0 0 15px rgba(64, 158, 255, 0.4);
+        }
+        .stat-icon {
+            font-size: 40px;
+            color: #409eff;
+            margin-right: 20px;
+            width: 60px;
+            text-align: center;
+        }
+        .stat-info h3 {
+            margin: 0 0 6px 0;
+            font-weight: 700;
+            font-size: 28px;
+            color: #1f3c88;
+        }
+        .stat-info p {
+            margin: 0;
+            color: #666;
+            font-size: 15px;
+        }
+
+        /* 图表区域 */
+        .charts-grid {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .chart-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 12px rgb(64 158 255 / 0.15);
+            padding: 20px;
+            flex: 1 1 480px;
+        }
+        .chart-card h3 {
+            margin-bottom: 18px;
+            font-weight: 600;
+            color: #409eff;
+        }
+        .chart-container {
+            width: 100%;
+            height: 320px;
+        }
+
+        /* 快速操作 */
+        .quick-actions {
+            margin-top: 40px;
+        }
+        .quick-actions h3 {
+            color: #409eff;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>学生信息管理系统 - 学生端</span>
+            </div>
+            <nav class="nav-menu">
+                <ul>
+                    <li>
+                        <a
+                                href="#"
+                                @click.prevent="setActiveTab('dashboard')"
+                                :class="{ active: activeTab === 'dashboard' }"
+                        >
+                            <i class="fas fa-tachometer-alt"></i> 仪表盘
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                                href="#"
+                                @click.prevent="setActiveTab('profile')"
+                                :class="{ active: activeTab === 'profile' }"
+                        >
+                            <i class="fas fa-user"></i> 个人资料
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                                href="#"
+                                @click.prevent="setActiveTab('course_select')"
+                                :class="{ active: activeTab === 'course_select' }"
+                        >
+                            <i class="fas fa-book"></i> 选课
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                                href="#"
+                                @click.prevent="setActiveTab('grades_select')"
+                                :class="{ active: activeTab === 'grades_select' }"
+                        >
+                            <i class="fas fa-chart-line"></i> 成绩查询
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                <el-dropdown @command="handleUserCommand">
+            <span class="user-avatar">
+              <img
+                      :src="userInfo.avatar || '../images/default-avatar.png'"
+                      :alt="userInfo.name"
+              />
+              <span>{{ userInfo.name }}</span>
+              <i class="el-icon-arrow-down"></i>
+            </span>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item command="profile"
+                        ><i class="fas fa-user"></i> 个人资料</el-dropdown-item
+                        >
+                        <el-dropdown-item command="logout" divided
+                        ><i class="fas fa-sign-out-alt"></i> 退出登录</el-dropdown-item
+                        >
+                    </el-dropdown-menu>
+                </el-dropdown>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main class="main-content">
+        <!-- 仪表盘 -->
+        <div v-show="activeTab === 'dashboard'" class="tab-content">
+            <div class="dashboard">
+                <h2><i class="fas fa-tachometer-alt"></i> 学生仪表盘</h2>
+
+                <!-- 统计卡片 -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon credits">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>{{ dashboardData.total_credits }}</h3>
+                            <p>累计学分</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon current-credits">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>{{ currentTermCredits }}</h3>
+                            <p>本学期学分</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon gpa">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>{{ dashboardData.current_term_avg_grade ? dashboardData.current_term_avg_grade.toFixed(2) : 'N/A' }}</h3>
+                            <p>平均绩点 (GPA)</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon selected-courses">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>{{ dashboardData.current_term_courses }}</h3>
+                            <p>已选课程</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 图表区域 -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>学期学分趋势</h3>
+                        <div id="creditsChart" class="chart-container"></div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>成绩分布</h3>
+                        <div id="scoreChart" class="chart-container"></div>
+                    </div>
+                </div>
+
+                <!-- 快速操作 -->
+                <div class="quick-actions">
+                    <h3>快速操作</h3>
+                    <div class="action-buttons">
+                        <el-button type="primary" @click="setActiveTab('profile')"
+                        ><i class="fas fa-user-edit"></i> 修改个人资料</el-button
+                        >
+                        <el-button type="success" @click="setActiveTab('course_select')"
+                        ><i class="fas fa-book"></i> 选课</el-button
+                        >
+                        <el-button type="info" @click="setActiveTab('grades_select')"
+                        ><i class="fas fa-chart-bar"></i> 查询成绩</el-button
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 个人资料 -->
+        <div v-show="activeTab === 'profile'" class="tab-content">
+            <h2><i class="fas fa-chart-line"></i> 个人信息</h2>
+            <el-form :model="profileForm" label-width="100px" style="max-width: 500px">
+                <el-form-item label="学号">
+                    <el-input v-model="profileForm.sno" disabled></el-input>
+                </el-form-item>
+
+                <el-form-item label="姓名">
+                    <el-input v-model="profileForm.name" disabled></el-input>
+                </el-form-item>
+
+                <el-form-item label="手机号">
+                    <el-input v-model="profileForm.phone" placeholder="请输入手机号"></el-input>
+                </el-form-item>
+
+                <el-form-item label="地址">
+                    <el-input v-model="profileForm.address" placeholder="请输入联系地址"></el-input>
+                </el-form-item>
+
+                <el-form-item>
+                    <el-button type="primary" @click="updateProfile">保存修改</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
+
+        <!-- 选课 -->
+        <div v-show="activeTab === 'course_select'" class="tab-content">
+            <h2><i class="fas fa-book"></i> 选课</h2>
+
+            <!-- 可选课程 -->
+            <el-card shadow="hover" class="box-card" style="margin-bottom: 20px;">
+                <div slot="header" class="clearfix">
+                    <span>可选课程列表</span>
+                </div>
+                <el-table :data="courseList" style="width: 100%" stripe>
+                    <el-table-column prop="course_id" label="课程编号" width="100"></el-table-column>
+                    <el-table-column prop="course_name" label="课程名称"></el-table-column>
+                    <el-table-column prop="teacher_name" label="任课教师"></el-table-column>
+                    <el-table-column prop="credit" label="学分" width="80"></el-table-column>
+                    <el-table-column label="操作" width="120">
+                        <template v-slot="scope">
+                            <el-button
+                                    :type="selectedTeachingIds.includes(scope.row.teaching_id) ? 'danger' : 'primary'"
+                                    size="mini"
+                                    :disabled="selectedTeachingIds.includes(scope.row.teaching_id)"
+                                    @click="selectCourse(scope.row.teaching_id)"
+                            >
+                                {{ selectedTeachingIds.includes(scope.row.teaching_id) ? '已选' : '选课' }}
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <div style="margin-top: 10px; text-align: right;">
+                    <el-pagination
+                            @current-change="handleCoursePageChange"
+                            :current-page="coursePage"
+                            :page-size="coursePageSize"
+                            :total="courseTotal"
+                            layout="prev, pager, next">
+                    </el-pagination>
+                </div>
+            </el-card>
+
+            <!-- 已选课程 -->
+            <el-card shadow="hover" class="box-card">
+                <div slot="header" class="clearfix">
+                    <span>已选课程</span>
+                </div>
+                <el-table :data="selectedCourses" style="width: 100%" stripe>
+                    <el-table-column prop="course_id" label="课程编号" width="100"></el-table-column>
+                    <el-table-column prop="course_name" label="课程名称"></el-table-column>
+                    <el-table-column prop="teacher_name" label="任课教师"></el-table-column>
+                    <el-table-column prop="credit" label="学分" width="80"></el-table-column>
+                </el-table>
+            </el-card>
+        </div>
+
+        <!-- 成绩查询 -->
+        <div v-show="activeTab === 'grades_select'" class="tab-content">
+            <h2><i class="fas fa-chart-line"></i> 成绩查询</h2>
+
+            <el-table :data="grades" stripe style="width: 100%">
+                <el-table-column prop="term" label="学期" width="120"></el-table-column>
+                <el-table-column prop="course_id" label="课程编号" width="120"></el-table-column>
+                <el-table-column prop="course_name" label="课程名称"></el-table-column>
+                <el-table-column prop="teacher_name" label="任课教师" width="150"></el-table-column>
+                <el-table-column prop="grade" label="成绩" width="100">
+                    <template slot-scope="scope">
+                        <span v-if="scope.row.grade !== null">{{ scope.row.grade.toFixed(2) }}</span>
+                        <span v-else>暂无成绩</span>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </div>
+
+    </main>
+</div>
+
+<!-- Vue 相关库 -->
+<script src="https://unpkg.com/vue@2/dist/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+
+<script>
+    new Vue({
+        el: "#app",
+        data() {
+            return {
+                loading: false,
+                error: null,
+                activeTab: "dashboard",
+                userInfo: {
+                    name: "学生",
+                    avatar: "", // 头像地址或空
+                },
+                dashboardData: {
+                    sno: "",
+                    name: "",
+                    total_credits: 0,
+                    current_term: "",
+                    current_term_courses: 0,
+                    current_term_avg_grade: null,
+                    credits_trend: [],
+                    score_distribution: [],
+                },
+                profileForm: {
+                    sno: "",
+                    name: "",
+                    gender:"",
+                    phone: "",
+                    address: ""
+                },
+                courseList: [],
+                coursePage: 1,
+                coursePageSize: 5,
+                courseTotal: 0,
+                selectedCourses: [],
+
+                grades: [],
+            };
+        },
+        computed: {
+            currentTermCredits() {
+                const termObj = this.dashboardData.credits_trend.find(
+                    item => item.semester === this.dashboardData.current_term
+                );
+                return termObj ? termObj.credits : 0;
+            }
+        },
+        methods: {
+            fetchDashboardData() {
+                this.loading = true;
+                this.error = null;
+                const sno = this.getStudentSno();
+
+                axios.get(`http://127.0.0.1:8000/students_dashboard/${sno}`)
+                    .then(res => {
+                        if (res.data.code === 200) {
+                            this.dashboardData = res.data.data;
+                            this.initDashboardCharts();
+                        } else {
+                            this.error = "获取数据失败";
+                        }
+                    })
+                    .catch(err => {
+                        this.error = "请求错误：" + err.message;
+                    })
+                    .finally(() => {
+                        this.loading = false;
+                    });
+            },
+
+            getStudentSno() {
+                // TODO: 这里需要你实现从登录状态或其他地方获取当前学生学号
+                // 例如：return this.$store.state.user.sno;
+                //return 'S000004'; // 示例学号，记得改成真实逻辑
+                const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+                if (userInfo && userInfo.role === 'student') {
+                    return userInfo.username; // 这里返回真实的学号
+                } else {
+                    // 如果没登录或不是学生，跳转回登录页
+                    alert("请先登录学生账号");
+                    window.location.href = "login.html";
+                    return null;
+                }
+            },
+
+            setActiveTab(tab) {
+                this.activeTab = tab;
+                if (tab === "dashboard") {
+                    this.fetchDashboardData();
+                }
+                else if (tab === "profile") {
+                    this.fetchProfile();
+                }
+                else if (tab === "course_select") {
+                    this.fetchCourseList();
+                    this.fetchSelectedCourses();
+                }
+                else if (tab === "grades_select") {
+                    this.fetchGrades();
+                }
+            },
+            handleUserCommand(command) {
+                if (command === "profile") this.setActiveTab("profile");
+                else if (command === "logout") {
+                    window.location.href ="login.html";
+                    // 实际项目中这里调用退出接口或跳转登录页
+                }
+            },
+            initDashboardCharts() {
+                this.$nextTick(() => {
+                    // 学分趋势折线图
+                    const creditsDom = document.getElementById("creditsChart");
+                    if (creditsDom && this.dashboardData.credits_trend.length) {
+                        const creditsChart = echarts.init(creditsDom);
+                        creditsChart.setOption({
+                            tooltip: { trigger: "axis" },
+                            xAxis: {
+                                type: "category",
+                                data: this.dashboardData.credits_trend.map((item) => item.semester),
+                            },
+                            yAxis: {
+                                type: "value",
+                                name: "学分",
+                                min: 0,
+                            },
+                            series: [
+                                {
+                                    data: this.dashboardData.credits_trend.map((item) => item.credits),
+                                    type: "line",
+                                    smooth: true,
+                                    areaStyle: {},
+                                    color: "#409EFF",
+                                },
+                            ],
+                        });
+                    }
+
+                    // 成绩分布柱状图
+                    const scoreDom = document.getElementById("scoreChart");
+                    if (scoreDom && this.dashboardData.score_distribution.length) {
+                        const scoreChart = echarts.init(scoreDom);
+                        scoreChart.setOption({
+                            tooltip: { trigger: "axis" },
+                            xAxis: {
+                                type: "category",
+                                data: this.dashboardData.score_distribution.map((item) => item.course),
+                            },
+                            yAxis: {
+                                type: "value",
+                                name: "成绩",
+                                max: 100,
+                                min: 0,
+                            },
+                            series: [
+                                {
+                                    data: this.dashboardData.score_distribution.map((item) => item.score),
+                                    type: "bar",
+                                    itemStyle: {
+                                        color: "#67C23A",
+                                    },
+                                },
+                            ],
+                        });
+                    }
+                });
+            },
+            fetchProfile() {
+                const sno = this.getStudentSno();
+                axios.get(`http://127.0.0.1:8000/students_info/${sno}`)
+                    .then(res => {
+                        if (res.data.code === 200) {
+                            this.profileForm = res.data.data;
+                        } else {
+                            this.$message.error("获取个人资料失败");
+                        }
+                    })
+                    .catch(err => {
+                        this.$message.error("网络错误：" + err.message);
+                    });
+            },
+            updateProfile() {
+                const sno = this.getStudentSno();
+                axios.post(`http://127.0.0.1:8000/students/${sno}/update_profile`, {
+                    phone: this.profileForm.phone,
+                    address: this.profileForm.address
+                })
+                    .then(res => {
+                        if (res.data.code === 200) {
+                            this.$message.success("修改成功！");
+                        } else {
+                            this.$message.error("修改失败：" + res.data.message);
+                        }
+                    })
+                    .catch(err => {
+                        this.$message.error("网络错误：" + err.message);
+                    });
+            },
+
+            //选课
+            fetchCourseList() {
+                const sno = this.getStudentSno();
+                axios.get(`http://127.0.0.1:8000/courses/available`, {
+                    params: {
+                        sno,
+                        page: this.coursePage,
+                        size: this.coursePageSize
+                    }
+                }).then(res => {
+                    if (res.data.code === 200) {
+                        this.courseList = res.data.data.courses;
+                        this.courseTotal = res.data.data.total;
+                    }
+                });
+            },
+
+            handleCoursePageChange(page) {
+                this.coursePage = page;
+                this.fetchCourseList();
+            },
+
+            fetchSelectedCourses() {
+                const sno = this.getStudentSno();
+                axios.get(`http://127.0.0.1:8000/students/${sno}/selected_courses`)
+                    .then(res => {
+                        if (res.data.code === 200) {
+                            this.selectedCourses = res.data.data;
+                            // 同时同步已选课程ID到数组
+                            this.selectedTeachingIds = res.data.data.map(item => item.teaching_id);
+                        } else {
+                            this.$message.error("获取已选课程失败");
+                        }
+                    }).catch(err => {
+                    this.$message.error("请求错误：" + err.message);
+                });
+            },
+
+            selectCourse(teachingId) {  // 这里参数名用 teachingId 更明确
+                const sno = this.getStudentSno();
+                axios.post(`http://127.0.0.1:8000/students/${sno}/select_course`, {
+                    teaching_id: teachingId
+                }).then(res => {
+                    if (res.data.code === 200) {
+                        this.$message.success("选课成功！");
+                        this.fetchSelectedCourses();
+                    } else {
+                        this.$message.error(res.data.message || "选课失败");
+                    }
+                }).catch(err => {
+                    this.$message.error("请求失败：" + err.message);
+                });
+            },
+
+            fetchGrades() {
+                const sno = this.getStudentSno();
+                axios.get(`http://127.0.0.1:8000/students/${sno}/grades`)
+                    .then(res => {
+                        if (res.data.code === 200) {
+                            this.grades = res.data.data;
+                        } else {
+                            this.$message.error("成绩获取失败");
+                        }
+                    }).catch(err => {
+                    this.$message.error("请求错误：" + err.message);
+                });
+            },
+
+        },
+        mounted() {
+            this.fetchDashboardData();
+        },
+    });
+</script>
+</body>
+</html>
